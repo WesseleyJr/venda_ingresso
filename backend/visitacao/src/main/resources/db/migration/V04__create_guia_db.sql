@@ -1,0 +1,10 @@
+CREATE TABLE guia (
+	id SERIAL PRIMARY KEY,
+	nome_completo VARCHAR(255) NOT NULL,
+	celular VARCHAR(14) NOT NULL UNIQUE,
+	cpf VARCHAR(11) NOT NULL UNIQUE,
+	id_usuario BIGINT NOT NULL,
+	
+	CONSTRAINT fk_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id)
+)
+

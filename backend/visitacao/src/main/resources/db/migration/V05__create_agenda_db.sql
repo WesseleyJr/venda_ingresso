@@ -1,0 +1,9 @@
+CREATE TABLE agenda (
+	id SERIAL PRIMARY KEY,
+	data_hora TIMESTAMP NOT NULL UNIQUE, 
+	preco DECIMAL(20,0) NOT NULL,
+	capacidade INT DEFAULT 50 NOT NULL,
+	id_guia BIGINT NOT NULL,
+	
+	CONSTRAINT fk_guia FOREIGN KEY (id_guia) REFERENCES guia(id)
+)
