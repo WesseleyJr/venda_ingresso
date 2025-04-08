@@ -1,4 +1,4 @@
 CREATE TABLE perfil (
-	id SERIAL PRIMARY KEY,
+	id_perfil SERIAL PRIMARY KEY,
 	nome VARCHAR(100)
 )
