@@ -33,7 +33,7 @@ public class Usuario implements UserDetails, Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_usuario")
+	@Column(name = "id")
 	private Long id;
 
 	@Column(length = 100, name = "primeiro_nome")
@@ -49,6 +49,18 @@ public class Usuario implements UserDetails, Serializable {
 	
 	@OneToMany(mappedBy = "id.usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<UsuarioPerfil> usuarioPerfis = new HashSet<>();
+	
+	@OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Cliente> clientes = new HashSet<>();
+	
+	
+	public Set<Cliente> getClientes() {
+		return clientes;
+	}
+
+	public void setClientes(Set<Cliente> clientes) {
+		this.clientes = clientes;
+	}
 
 	public Usuario() {
 	}
