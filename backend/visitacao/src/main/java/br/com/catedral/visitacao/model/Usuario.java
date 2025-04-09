@@ -53,7 +53,20 @@ public class Usuario implements UserDetails, Serializable {
 	@OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Cliente> clientes = new HashSet<>();
 	
+	@OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Guia> guias = new HashSet<>();
 	
+	
+	
+	
+	public Set<Guia> getGuias() {
+		return guias;
+	}
+
+	public void setGuias(Set<Guia> guias) {
+		this.guias = guias;
+	}
+
 	public Set<Cliente> getClientes() {
 		return clientes;
 	}
