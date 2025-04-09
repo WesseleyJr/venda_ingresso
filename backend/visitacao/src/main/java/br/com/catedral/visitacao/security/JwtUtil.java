@@ -1,7 +1,6 @@
 package br.com.catedral.visitacao.security;
 
 import java.util.Date;
-import java.util.Set;
 
 import javax.crypto.SecretKey;
 
