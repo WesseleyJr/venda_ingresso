@@ -29,7 +29,10 @@ export const Login = () => {
     setEmail(value);
   };
 
-  const handleLogin = () => {};
+  const handleLogin = () => {
+
+    navigate.navigate('Home')
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
