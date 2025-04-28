@@ -21,7 +21,6 @@ public record ClienteInserirDTO(
 		@NotNull(message = "Data de Nascimento não pode ser nulo")
 		LocalDate dataNascimento,
 		
-		@NotBlank(message = "Nome do esponsavel não pode ser nulo")
 		String nomeResponsavel,
 		
 	    @NotNull(message = "Genero não pode ser nulo")

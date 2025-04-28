@@ -3,6 +3,8 @@ package br.com.catedral.visitacao.controller;
 import br.com.catedral.visitacao.dto.QrCodeDTO;
 import br.com.catedral.visitacao.dto.QrCodeInserirDTO;
 import br.com.catedral.visitacao.service.QrCodeService;
+import io.swagger.v3.oas.annotations.Operation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ public class QrCodeController {
     @Autowired
     private QrCodeService qrCodeService;
 
+    @Operation(summary = "Cadastro do qrcode", description = "Cadastro do qrcode dado o determinado BODY")
     @PostMapping
     public ResponseEntity<QrCodeDTO> inserir(@RequestBody QrCodeInserirDTO qrCodeInserirDTO) {
         QrCodeDTO qrCodeDTO = qrCodeService.inserir(qrCodeInserirDTO);
@@ -29,12 +32,14 @@ public class QrCodeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(qrCodeDTO);
     }
 
+    @Operation(summary = "Retorna todas os qrcodes", description = "Lista todos os qrcodes")
     @GetMapping
     public ResponseEntity<List<QrCodeDTO>> buscarTodos() {
         List<QrCodeDTO> qrCodes = qrCodeService.buscarTodos();
         return ResponseEntity.ok(qrCodes);
     }
 
+    @Operation(summary = "Retorna o qrcode pelo id", description = "Dado um determinado id, será retornado o qrcode")
     @GetMapping("/{id}")
     public ResponseEntity<QrCodeDTO> buscarPorId(@PathVariable Long id) {
         Optional<QrCodeDTO> qrCodeDTO = qrCodeService.buscarPorId(id);
@@ -46,6 +51,7 @@ public class QrCodeController {
         }
     }
 
+    @Operation(summary = "Atualiza o qrcode pelo id", description = "Dado um determinado id e as informações, será atualizado os dados de cadastro do qrcode")
     @PutMapping("/{id}")
     public ResponseEntity<QrCodeDTO> atualizar(@PathVariable Long id, @RequestBody QrCodeInserirDTO qrCodeInserirDTO) {
         Optional<QrCodeDTO> qrCodeDTO = qrCodeService.atualizar(id, qrCodeInserirDTO);
@@ -57,6 +63,7 @@ public class QrCodeController {
         }
     }
 
+    @Operation(summary = "Deleta o qrcode pelo id", description = "Dado um determinado id, será deletado o qrcode")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         boolean isDeleted = qrCodeService.excluir(id);

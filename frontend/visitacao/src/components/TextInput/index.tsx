@@ -7,7 +7,6 @@ interface PropsInput {
   placeHolder: string;
   typeInput?: boolean;
   valueInput: string;
-  propsLabel: string;
   hadleFunctionInput: (value: string) => void;
   propsShowEye?: boolean;
 }
@@ -16,7 +15,6 @@ export const TextInputField = ({
   placeHolder,
   typeInput,
   valueInput,
-  propsLabel,
   propsShowEye = false,
   hadleFunctionInput,
 }: PropsInput) => {
@@ -25,7 +23,6 @@ export const TextInputField = ({
     <>
       {propsShowEye === false ? (
         <>
-          <Text style={styles.label}>{propsLabel}</Text>
           <View style={styles.container}>
             <TextInput
               onChangeText={hadleFunctionInput}
@@ -40,7 +37,6 @@ export const TextInputField = ({
         </>
       ) : (
         <>
-          <Text style={styles.label}>{propsLabel}</Text>
           <View style={styles.container}>
             <TextInput
               onChangeText={hadleFunctionInput}

@@ -9,6 +9,7 @@ import br.com.catedral.visitacao.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,6 +22,24 @@ public class ClienteService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    public List<ClienteDTO> inserirLista(List<ClienteInserirDTO> clientesInserirDTO) {
+        List<ClienteDTO> clientesSalvos = new ArrayList<>();
+
+        for (ClienteInserirDTO clienteInserirDTO : clientesInserirDTO) {
+            Optional<Usuario> usuarioOptional = usuarioRepository.findById(clienteInserirDTO.idUsuario());
+
+            if (usuarioOptional.isPresent()) {
+                Cliente cliente = clienteInserirDTO.toEntity(new Cliente());
+                cliente.setUsuario(usuarioOptional.get());
+
+                Cliente clienteSalvo = clienteRepository.save(cliente);
+                clientesSalvos.add(ClienteDTO.toDto(clienteSalvo));
+            }
+        }
+
+        return clientesSalvos;
+    }
 
     public ClienteDTO inserir(ClienteInserirDTO clienteInserirDTO) {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(clienteInserirDTO.idUsuario());

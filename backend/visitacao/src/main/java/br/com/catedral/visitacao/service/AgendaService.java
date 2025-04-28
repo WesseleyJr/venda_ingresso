@@ -21,6 +21,20 @@ public class AgendaService {
 
     @Autowired
     private GuiaRepository guiaRepository;
+    
+    public List<AgendaDTO> buscarPorMes(int mes) {
+         List<Agenda> agendas = agendaRepository.buscarAgendaPorMes(mes);
+         return agendas.stream()
+                 .map(AgendaDTO::toDto)
+                 .collect(Collectors.toList());
+    }
+    
+    public List<AgendaDTO> buscarPorMesDia(int mes, int dia) {
+    	List<Agenda> agendas = agendaRepository.buscarAgendaPorMesEDia(mes, dia);
+    	return agendas.stream()
+    			.map(AgendaDTO::toDto)
+    			.collect(Collectors.toList());
+    }
 
     public AgendaDTO inserir(AgendaInserirDTO agendaInserirDTO) {
         Optional<Guia> guiaOptional = guiaRepository.findById(agendaInserirDTO.idGuia());

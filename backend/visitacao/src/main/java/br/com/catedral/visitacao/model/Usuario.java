@@ -23,6 +23,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -38,13 +39,16 @@ public class Usuario implements UserDetails, Serializable {
 
 	@Column(length = 100, name = "primeiro_nome")
 	@Size(max = 100)
+	@NotBlank(message = "Nome não pode ser nulo")
 	private String nome;
 
 	@Column(length = 100)
 	@Size(max = 100)
 	@Email
+	@NotBlank(message = "Email não pode ser nulo")
 	private String email;
 
+	@NotBlank(message = "Senha não pode ser nulo")
 	private String senha;
 	
 	@OneToMany(mappedBy = "id.usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)

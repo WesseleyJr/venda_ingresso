@@ -57,7 +57,7 @@ public class SecurityConfig {
 	            .requestMatchers(HttpMethod.PUT, "/ingresso").permitAll()
 	            .requestMatchers(HttpMethod.DELETE, "/ingresso/**").permitAll()
 	            .requestMatchers(HttpMethod.GET, "/cliente/**").permitAll()
-	            .requestMatchers(HttpMethod.POST, "/cliente").permitAll()
+	            .requestMatchers(HttpMethod.POST, "/cliente/**").permitAll()
 	            .requestMatchers(HttpMethod.PUT, "/cliente/**").permitAll()
 	            .requestMatchers(HttpMethod.DELETE, "/cliente/**").permitAll()
 	            .requestMatchers(HttpMethod.GET, "/pagamento/**").permitAll()
@@ -68,6 +68,7 @@ public class SecurityConfig {
 	            .requestMatchers(HttpMethod.POST, "/qrcode").permitAll()
 	            .requestMatchers(HttpMethod.PUT, "/qrcode/**").permitAll()
 	            .requestMatchers(HttpMethod.DELETE, "/qrcode/**").permitAll()
+	            .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 	 
 	            .anyRequest().authenticated()
 	    )
@@ -92,7 +93,7 @@ public class SecurityConfig {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
-		corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+		corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:8081"));
 		corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT"));
 		
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
