@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import { useNavigation } from "@react-navigation/native";
 import {
+  Button,
   KeyboardAvoidingView,
   ScrollView,
   Text,
@@ -11,65 +12,28 @@ import {
 } from "react-native";
 import { styles } from "./style";
 import { HeaderCadastro } from "../../components/HeaderCadastro";
+import { postUser } from "../../service/userService";
+import { TextInputField } from "../../components/TextInput";
+import Toast from "react-native-toast-message";
+import { useApiUrl } from "../../hooks/ApiUrlContext";
 
 export const CadastroUser = () => {
   const navigate = useNavigation();
+  const { apiUrl } = useApiUrl();
 
   const [form, setForm] = useState({
     nome: "",
     email: "",
     senha: "",
-    confirmarSenha: "",
+    confirmaSenha: "",
   });
 
-  const formatField = (field: string, value: string) => {
-    if (field === "cpf") {
-      return value
-        .replace(/\D/g, "")
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-    } else if (field === "telefone") {
-      return value
-        .replace(/\D/g, "")
-        .replace(/(\d{2})(\d)/, "($1) $2")
-        .replace(/(\d{4,5})(\d{4})$/, "$1-$2");
-    } else if (field === "dataNascimento") {
-      return value
-        .replace(/\D/g, "")
-        .replace(/(\d{2})(\d)/, "$1/$2")
-        .replace(/(\d{2})(\d{1,4})$/, "$1/$2");
-    }
-    return value;
-  };
-
-  const handleSubmit = () => {
-    if (form.nome === "") {
-      alert("O campo nome está vazio");
-      return;
-    }
-    if (form.email === "") {
-      alert("O campo email está vazio");
-      return;
-    }
-    if (form.senha === "") {
-      alert("O campo senha está vazio");
-      return;
-    }
-    if (form.confirmarSenha === "") {
-      alert("O campo confirma senha está vazio");
-      return;
-    }
-    if (form.senha !== form.confirmarSenha) {
-      alert("As senhas não coincidem!");
-      return;
-    }
-
+  const handleSubmit = async () => {
     const user = {
       nome: form.nome,
       email: form.email,
       senha: form.senha,
-      confirmaSenha: form.confirmarSenha,
+      confirmaSenha: form.confirmaSenha,
       perfis: [
         {
           id: 2,
@@ -77,18 +41,43 @@ export const CadastroUser = () => {
       ],
     };
 
-    alert("Cadastro realizado com sucesso!");
-    navigate.navigate("StcakLogin");
+    try {
+      const response = await postUser(user, apiUrl);
+
+      Toast.show({
+        type: "success",
+        text1: "Usuário cadastrado!",
+        text2: response?.data?.mensagem || "Cadastro realizado com sucesso!",
+      });
+
+      navigate.navigate("Login");
+    } catch (error: any) {
+      const primeiroErro =
+        error?.erros && Array.isArray(error.erros)
+          ? error.erros[0]
+          : "Erro ao cadastrar usuário.";
+
+      Toast.show({
+        type: "error",
+        text1: "Erro de cadastro",
+        text2: primeiroErro,
+        visibilityTime: 4000,
+      });
+    }
   };
 
-  const handleInputChange = (field: string, value: string) => {
-    const formattedValue = formatField(field, value);
-    setForm((prevForm) => ({ ...prevForm, [field]: formattedValue }));
+  const showToast = () => {
+    Toast.show({
+      type: "success",
+      position: "top",
+      text1: "Sucesso!",
+      text2: "A requisição foi realizada com sucesso!",
+    });
   };
 
   return (
     <>
-    <HeaderCadastro/>
+      <HeaderCadastro />
       <KeyboardAvoidingView
         style={{
           flex: 1,
@@ -108,30 +97,36 @@ export const CadastroUser = () => {
                 style={styles.input}
                 placeholder="Nome"
                 value={form.nome}
-                onChangeText={(text) => handleInputChange("nome", text)}
+                onChangeText={(text) => setForm({ ...form, nome: text })}
               />
               <TextInput
                 style={styles.input}
                 placeholder="E-mail"
                 value={form.email}
-                onChangeText={(text) => handleInputChange("email", text)}
+                onChangeText={(text) => setForm({ ...form, email: text })}
               />
-              <TextInput
-                style={styles.input}
-                placeholder="Senha"
-                secureTextEntry
-                value={form.senha}
-                onChangeText={(text) => handleInputChange("senha", text)}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Confirmar Senha"
-                secureTextEntry
-                value={form.confirmarSenha}
-                onChangeText={(text) =>
-                  handleInputChange("confirmarSenha", text)
-                }
-              />
+              <View style={styles.senha}>
+                <TextInputField
+                  placeHolder="Senha"
+                  valueInput={form.senha}
+                  hadleFunctionInput={(text) =>
+                    setForm({ ...form, senha: text })
+                  }
+                  typeInput={true}
+                  propsShowEye={true}
+                />
+              </View>
+              <View style={styles.senha}>
+                <TextInputField
+                  placeHolder="Confirma senha"
+                  valueInput={form.confirmaSenha}
+                  hadleFunctionInput={(text) =>
+                    setForm({ ...form, confirmaSenha: text })
+                  }
+                  typeInput={true}
+                  propsShowEye={true}
+                />
+              </View>
               <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Cadastrar</Text>
               </TouchableOpacity>

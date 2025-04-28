@@ -43,7 +43,6 @@ public class Cliente {
 	@Column(name = "data_nascimento")
 	private LocalDate dataNascimento;
 	
-	@NotBlank(message = "Nome do esponsavel não pode ser nulo")
 	@Column(name = "nome_responsavel")
 	private String nomeResponsavel;
 	

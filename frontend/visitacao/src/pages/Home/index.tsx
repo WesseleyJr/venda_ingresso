@@ -12,6 +12,7 @@ import {
 import { styles } from "./style";
 import { Header } from "../../components/Header";
 import { Icon } from "react-native-elements";
+import { useNavigation } from "@react-navigation/native";
 
 export const Home = () => {
   const openInstagram = () => {
@@ -33,13 +34,13 @@ export const Home = () => {
   const callPhone = () => {
     Linking.openURL("tel:+552422379027");
   };
-
+  const navigation = useNavigation()
   return (
     <>
       <Header />
       <View style={styles.container}>
         <View style={styles.content}>
-          <TouchableOpacity style={styles.innerButton}>
+          <TouchableOpacity style={styles.innerButton} onPress={()=> navigation.navigate('Agenda')}>
             <ImageBackground
               source={require("../../assets/images/CatedralKoeller.png")} 
               style={styles.button}

@@ -9,6 +9,10 @@ export const styles = StyleSheet.create({
     marginTop: 50
   },
 
+  senha:{
+    width: "100%",
+   },
+
   header: {    
     flexDirection: "row",
     width: "90%",
@@ -51,8 +55,8 @@ export const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
     borderRadius: 10,
     padding: 10,
-    marginBottom: 10,
     width: "100%",
+    height: 50
   },
 
   picker: {

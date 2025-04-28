@@ -20,11 +20,12 @@ public class JwtUtil {
 	@Value("${auth-jwt-expiration-miliseg}")
 	private Long jwtExpirationMiliseg;
 	
-	public String generateToken(String username, String colaboradorNome, String role) {
+	public String generateToken(String username, String usuarioNome, String role, Long usuarioId) {
 		SecretKey secreKeySpec = Keys.hmacShaKeyFor(jwtSecret.getBytes());
 		return Jwts.builder()
 				.setSubject(username)
-				.claim("nome", colaboradorNome)
+				.claim("nome", usuarioNome)
+				.claim("id", usuarioId)
 				.claim("role", role)
 				.setExpiration(new Date(System.currentTimeMillis() + 
 						this.jwtExpirationMiliseg))

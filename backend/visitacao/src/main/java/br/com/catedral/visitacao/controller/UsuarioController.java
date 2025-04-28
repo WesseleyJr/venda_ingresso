@@ -18,6 +18,7 @@ import br.com.catedral.visitacao.dto.UsuarioDTO;
 import br.com.catedral.visitacao.dto.UsuarioInserirDTO;
 import br.com.catedral.visitacao.model.Usuario;
 import br.com.catedral.visitacao.service.UsuarioService;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/usuario")
@@ -26,11 +27,13 @@ public class UsuarioController {
 	@Autowired
 	UsuarioService usuarioService;
 	
+	@Operation(summary = "Retorna todas os usuarios", description = "Lista todos os usuarios")
 	@GetMapping
 	public ResponseEntity<List<UsuarioDTO>> listar() {
 		return ResponseEntity.ok(usuarioService.findAll());
 	}
 	
+	@Operation(summary = "Retorna o usuario pelo id", description = "Dado um determinado id, será retornado o usuario")
 	@GetMapping("/{id}")
 	public ResponseEntity<UsuarioDTO> buscar(@PathVariable Long id) {
 		Optional<Usuario> usuarioOpt = usuarioService.buscar(id);
@@ -41,6 +44,7 @@ public class UsuarioController {
 		return ResponseEntity.notFound().build();
 	}
 	
+	@Operation(summary = "Cadastro do usuario", description = "Cadastro do usuario dado o determinado BODY")
 	@PostMapping
 	public ResponseEntity<UsuarioDTO> inserir(@RequestBody UsuarioInserirDTO usuarioInserirDTO) {
 		UsuarioDTO usuarioDTO = usuarioService.inserir(usuarioInserirDTO);

@@ -1,7 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { styles } from "./style";
-import { Image, TouchableOpacity, View } from "react-native";
-import { Text } from "react-native-elements";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { Icon } from "react-native-elements";
 import Logo from "../../assets/images/logoCatedralHorizontal.png";
 

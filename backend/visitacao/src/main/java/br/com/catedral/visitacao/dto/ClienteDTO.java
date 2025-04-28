@@ -22,7 +22,6 @@ public record ClienteDTO(
 		String celular,
 		@NotNull(message = "Data de Nascimento não pode ser nulo")
 		LocalDate dataNascimento,
-		@NotBlank(message = "Nome do responsável não pode ser nulo")
 		String nomeResponsavel,
 	    @NotNull(message = "Gênero não pode ser nulo")
 	    GeneroEnum genero,
