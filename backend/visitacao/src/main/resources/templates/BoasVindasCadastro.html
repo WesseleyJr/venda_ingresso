@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boas-vindas!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #800909;
+            text-align: center;
+        }
+        p {
+            font-size: 16px;
+            color: #555555;
+        }
+        .footer {
+            font-size: 12px;
+            color: #999999;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bem-vindo(a), <span th:text="${nomeCliente}"></span>!</h1>
+        <p>Estamos felizes em tê-lo(a) conosco no aplicativo da Catedral São Pedro de Alcântara.</p>
+        <p>Seu cadastro foi realizado com sucesso e você agora pode acessar todos os recursos disponíveis.</p>
+        <div class="footer">
+            <p>Obrigado!</p>
+        </div>
+    </div>
+</body>
+</html>

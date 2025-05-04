@@ -68,6 +68,7 @@ public class SecurityConfig {
 	            .requestMatchers(HttpMethod.POST, "/qrcode").permitAll()
 	            .requestMatchers(HttpMethod.PUT, "/qrcode/**").permitAll()
 	            .requestMatchers(HttpMethod.DELETE, "/qrcode/**").permitAll()
+	            .requestMatchers(HttpMethod.POST, "/senha/**").permitAll()
 	            .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 	 
 	            .anyRequest().authenticated()

@@ -35,6 +35,8 @@ public class ClienteService {
 
                 Cliente clienteSalvo = clienteRepository.save(cliente);
                 clientesSalvos.add(ClienteDTO.toDto(clienteSalvo));
+                
+                
             }
         }
 

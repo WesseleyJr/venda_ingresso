@@ -1,5 +1,6 @@
 package br.com.catedral.visitacao.service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +28,9 @@ public class UsuarioService {
 	private UsuarioRepository usuarioRepository;
 	
 	@Autowired
+	private EmailService emailService;
+	
+	@Autowired
 	private PerfilService perfilService;
 	
 	@Autowired
@@ -45,30 +49,37 @@ public class UsuarioService {
 	
 	@Transactional
 	public UsuarioDTO inserir(UsuarioInserirDTO usuarioInserirDTO) throws EmailException, SenhaException {
-		if (!usuarioInserirDTO.getSenha().equals(usuarioInserirDTO.getConfirmaSenha())) {
-			throw new SenhaException("Senha e Confirma Senha não são iguais");
+	    if (!usuarioInserirDTO.getSenha().equals(usuarioInserirDTO.getConfirmaSenha())) {
+	        throw new SenhaException("Senha e Confirma Senha não são iguais");
+	    }
+	    if (usuarioRepository.findByEmail(usuarioInserirDTO.getEmail()) != null) {
+	        throw new EmailException("Email já existente");
+	    }
+
+	    Usuario usuario = new Usuario();
+	    usuario.setNome(usuarioInserirDTO.getNome());
+	    usuario.setEmail(usuarioInserirDTO.getEmail());
+	    usuario.setSenha(encoder.encode(usuarioInserirDTO.getSenha()));
+
+	    Set<UsuarioPerfil> perfis = new HashSet<>();
+	    for (Perfil perfil : usuarioInserirDTO.getPerfis()) {
+	        perfil = perfilService.buscar(perfil.getId());
+	        UsuarioPerfil usuarioPerfil = new UsuarioPerfil(usuario, perfil, LocalDate.now());
+	        perfis.add(usuarioPerfil);
+	    }
+	    usuario.setUsuarioPerfis(perfis);
+
+	    usuario = usuarioRepository.save(usuario);
+
+		try {
+			emailService.emailCadastro(usuario);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		if (usuarioRepository.findByEmail(usuarioInserirDTO.getEmail()) != null) {
-			throw new EmailException("Email já existente");
-		}
-		
-		Usuario usuario = new Usuario();
-		usuario.setNome(usuarioInserirDTO.getNome());
-		usuario.setEmail(usuarioInserirDTO.getEmail());
-		usuario.setSenha(encoder.encode(usuarioInserirDTO.getSenha()));
-		
-		Set<UsuarioPerfil> perfis = new HashSet<>();
-		for (Perfil perfil: usuarioInserirDTO.getPerfis()) {
-			perfil = perfilService.buscar(perfil.getId());
-			UsuarioPerfil usuarioPerfil = new UsuarioPerfil(usuario, perfil, LocalDate.now());
-			perfis.add(usuarioPerfil);
-		}
-		usuario.setUsuarioPerfis(perfis);
-		
-		usuario = usuarioRepository.save(usuario);
-		
-		UsuarioDTO usuarioDTO = new UsuarioDTO(usuario);
-		return usuarioDTO;
+
+	    UsuarioDTO usuarioDTO = new UsuarioDTO(usuario);
+	    return usuarioDTO;
 	}
+
 	
 }
