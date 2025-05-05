@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperação de Senha</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 24px;
+            color: #4CAF50;
+        }
+        .message {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .token {
+            font-size: 18px;
+            font-weight: bold;
+            color: #d9534f;
+            padding: 10px;
+            background-color: #f2dede;
+            border-radius: 4px;
+        }
+        .footer {
+            font-size: 14px;
+            color: #777;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Recuperação de Senha</h1>
+        </div>
+        <div class="message">
+			<span th:text="${nomeCliente}"></span>
+            <p>Olá <span th:text="${nomeCliente}"></span></p>
+            <p>Recebemos uma solicitação para a recuperação de sua senha em nosso sistema.</p>
+            <p>Para prosseguir com a redefinição de senha, por favor, utilize o token abaixo:</p>
+            <div class="token"><span th:text="${token}"></span></div>
+            <p>Se você não solicitou a recuperação de senha, por favor, ignore este e-mail.</p>
+        </div>
+        <div class="footer">
+            <p>Atenciosamente,<br>Catedral São Pedro de Alcântara</p>
+        </div>
+    </div>
+</body>
+</html>

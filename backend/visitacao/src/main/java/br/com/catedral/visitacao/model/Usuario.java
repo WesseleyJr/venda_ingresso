@@ -55,7 +55,7 @@ public class Usuario implements UserDetails, Serializable {
 	private Set<UsuarioPerfil> usuarioPerfis = new HashSet<>();
 	
 	@OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Cliente> clientes = new HashSet<>();
+	private Set<Ingresso> ingressos = new HashSet<>();
 	
 	@OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Guia> guias = new HashSet<>();
@@ -71,12 +71,13 @@ public class Usuario implements UserDetails, Serializable {
 		this.guias = guias;
 	}
 
-	public Set<Cliente> getClientes() {
-		return clientes;
+
+	public Set<Ingresso> getIngressos() {
+		return ingressos;
 	}
 
-	public void setClientes(Set<Cliente> clientes) {
-		this.clientes = clientes;
+	public void setIngressos(Set<Ingresso> ingressos) {
+		this.ingressos = ingressos;
 	}
 
 	public Usuario() {

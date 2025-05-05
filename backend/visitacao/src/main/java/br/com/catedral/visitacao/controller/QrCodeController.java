@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,29 +40,6 @@ public class QrCodeController {
         return ResponseEntity.ok(qrCodes);
     }
 
-    @Operation(summary = "Retorna o qrcode pelo id", description = "Dado um determinado id, será retornado o qrcode")
-    @GetMapping("/{id}")
-    public ResponseEntity<QrCodeDTO> buscarPorId(@PathVariable Long id) {
-        Optional<QrCodeDTO> qrCodeDTO = qrCodeService.buscarPorId(id);
-        
-        if (qrCodeDTO.isPresent()) {
-            return ResponseEntity.ok(qrCodeDTO.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  
-        }
-    }
-
-    @Operation(summary = "Atualiza o qrcode pelo id", description = "Dado um determinado id e as informações, será atualizado os dados de cadastro do qrcode")
-    @PutMapping("/{id}")
-    public ResponseEntity<QrCodeDTO> atualizar(@PathVariable Long id, @RequestBody QrCodeInserirDTO qrCodeInserirDTO) {
-        Optional<QrCodeDTO> qrCodeDTO = qrCodeService.atualizar(id, qrCodeInserirDTO);
-        
-        if (qrCodeDTO.isPresent()) {
-            return ResponseEntity.ok(qrCodeDTO.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  
-        }
-    }
 
     @Operation(summary = "Deleta o qrcode pelo id", description = "Dado um determinado id, será deletado o qrcode")
     @DeleteMapping("/{id}")
@@ -72,6 +50,17 @@ public class QrCodeController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();  
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();  
+        }
+    }
+    
+    @PostMapping("/ler")
+    public ResponseEntity<String> lerQrCode(@RequestParam("arquivo") MultipartFile arquivo) {
+        try {
+            byte[] imagem = arquivo.getBytes();
+            String conteudo = qrCodeService.lerQrCode(imagem);
+            return ResponseEntity.ok(conteudo);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao ler QR Code: " + e.getMessage());
         }
     }
 }

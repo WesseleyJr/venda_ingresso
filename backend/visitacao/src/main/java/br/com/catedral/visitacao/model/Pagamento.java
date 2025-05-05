@@ -1,17 +1,22 @@
 package br.com.catedral.visitacao.model;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import br.com.catedral.visitacao.constants.StatusPagamentoEnum;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -42,10 +47,9 @@ public class Pagamento {
 	@Column(name = "data_pagamento")
 	private LocalDateTime dataPagamento;
 	
-	@ManyToOne
-    @JoinColumn(name = "id_ingresso", referencedColumnName = "id")
-	@NotNull
-    private Ingresso ingresso;
+	
+	@OneToMany(mappedBy = "pagamento", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<Ingresso> ingressos = new HashSet<>();
 
 	public Long getId() {
 		return id;
@@ -87,12 +91,12 @@ public class Pagamento {
 		this.dataPagamento = dataPagamento;
 	}
 
-	public Ingresso getIngresso() {
-		return ingresso;
+	public Set<Ingresso> getIngressos() {
+		return ingressos;
 	}
 
-	public void setIngresso(Ingresso ingresso) {
-		this.ingresso = ingresso;
+	public void setIngressos(Set<Ingresso> ingressos) {
+		this.ingressos = ingressos;
 	}
 	
 	
