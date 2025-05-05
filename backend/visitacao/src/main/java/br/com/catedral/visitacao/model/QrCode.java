@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -34,7 +35,7 @@ public class QrCode {
 	@Column(name = "data_geracao")
 	private LocalDateTime dataGeracao;
 	
-	@ManyToOne
+	@OneToOne
     @JoinColumn(name = "id_ingresso", referencedColumnName = "id")
 	@NotNull
     private Ingresso ingresso;

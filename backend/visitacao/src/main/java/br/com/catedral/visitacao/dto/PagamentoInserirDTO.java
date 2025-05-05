@@ -21,10 +21,9 @@ public record PagamentoInserirDTO(
 	    @NotBlank(message = "Método de pagamento não pode ser nulo")
 	    String metodoPagamento,
 	    
-	    LocalDateTime dataPagamento,
+	    LocalDateTime dataPagamento
 	    
-	    @NotNull(message = "Ingresso não pode ser nulo")
-	    Long idIngresso
+
 
 	) {
 
@@ -33,8 +32,7 @@ public record PagamentoInserirDTO(
 	            pagamento.getStatusPagamentoEnum(),
 	            pagamento.getValor(),
 	            pagamento.getMetodoPagamento(),
-	            pagamento.getDataPagamento(),
-	            pagamento.getIngresso().getId()
+	            pagamento.getDataPagamento()
 	        );
 	    }
 
@@ -44,10 +42,6 @@ public record PagamentoInserirDTO(
 	        pagamento.setValor(valor);
 	        pagamento.setMetodoPagamento(metodoPagamento);
 	        pagamento.setDataPagamento(dataPagamento);
-
-	        Ingresso ingresso = new Ingresso();
-	        ingresso.setId(this.idIngresso);
-	        pagamento.setIngresso(ingresso);
 
 	        return pagamento;
 	    }

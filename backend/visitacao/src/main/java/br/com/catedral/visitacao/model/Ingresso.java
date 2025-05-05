@@ -1,8 +1,10 @@
 package br.com.catedral.visitacao.model;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import br.com.catedral.visitacao.constants.GeneroEnum;
 import br.com.catedral.visitacao.constants.StatusIngressoEnum;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -16,8 +18,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "ingresso")
@@ -38,30 +43,48 @@ public class Ingresso {
     private Agenda agenda;
 	
 	@ManyToOne
-    @JoinColumn(name = "id_cliente", referencedColumnName = "id")
+    @JoinColumn(name = "id_pagamento", referencedColumnName = "id")
 	@NotNull
-    private Cliente cliente;
+    private Pagamento pagamento;
 	
-	@OneToMany(mappedBy = "ingresso", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Pagamento> pagamentos = new HashSet<>();
-
-	@OneToMany(mappedBy = "ingresso", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<QrCode> qrCodes = new HashSet<>();
+	@NotBlank(message = "Nome completo não pode ser nulo")
+	@Column(name = "nome_completo")
+	private String nomeCompleto;
 	
-	public Set<Pagamento> getPagamentos() {
-		return pagamentos;
+	@Size(max = 14)
+	@NotBlank(message = "Celular não pode ser nulo")
+	@Column(name = "celular", length = 14)
+	private String celular;
+	
+	@NotNull(message = "Data de Nascimento não pode ser nulo")
+	@Column(name = "data_nascimento")
+	private LocalDate dataNascimento;
+	
+	@Column(name = "nome_responsavel")
+	private String nomeResponsavel;
+    
+	@ManyToOne
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id")
+	@NotNull
+    private Usuario usuario;
+
+	@OneToOne
+	private QrCode qrCode = new QrCode();
+	
+	public Pagamento getPagamento() {
+		return pagamento;
 	}
 
-	public void setPagamentos(Set<Pagamento> pagamentos) {
-		this.pagamentos = pagamentos;
+	public void setPagamento(Pagamento pagamento) {
+		this.pagamento = pagamento;
 	}
 
-	public Set<QrCode> getQrCodes() {
-		return qrCodes;
+	public QrCode getQrCode() {
+		return qrCode;
 	}
 
-	public void setQrCodes(Set<QrCode> qrCodes) {
-		this.qrCodes = qrCodes;
+	public void setQrCode(QrCode qrCode) {
+		this.qrCode = qrCode;
 	}
 
 	public Long getId() {
@@ -88,14 +111,45 @@ public class Ingresso {
 		this.agenda = agenda;
 	}
 
-	public Cliente getCliente() {
-		return cliente;
+	public String getNomeCompleto() {
+		return nomeCompleto;
 	}
 
-	public void setCliente(Cliente cliente) {
-		this.cliente = cliente;
+	public void setNomeCompleto(String nomeCompleto) {
+		this.nomeCompleto = nomeCompleto;
 	}
-	
+
+	public String getCelular() {
+		return celular;
+	}
+
+	public void setCelular(String celular) {
+		this.celular = celular;
+	}
+
+	public LocalDate getDataNascimento() {
+		return dataNascimento;
+	}
+
+	public void setDataNascimento(LocalDate dataNascimento) {
+		this.dataNascimento = dataNascimento;
+	}
+
+	public String getNomeResponsavel() {
+		return nomeResponsavel;
+	}
+
+	public void setNomeResponsavel(String nomeResponsavel) {
+		this.nomeResponsavel = nomeResponsavel;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
 	
 	
 }

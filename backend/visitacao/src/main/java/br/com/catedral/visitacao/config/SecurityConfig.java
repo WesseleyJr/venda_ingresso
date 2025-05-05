@@ -63,6 +63,7 @@ public class SecurityConfig {
 	            .requestMatchers(HttpMethod.GET, "/pagamento/**").permitAll()
 	            .requestMatchers(HttpMethod.POST, "/pagamento").permitAll()
 	            .requestMatchers(HttpMethod.PUT, "/pagamento/**").permitAll()
+	            .requestMatchers(HttpMethod.PATCH, "/pagamento/**").permitAll()
 	            .requestMatchers(HttpMethod.DELETE, "/pagamento/**").permitAll()
 	            .requestMatchers(HttpMethod.GET, "/qrcode/**").permitAll()
 	            .requestMatchers(HttpMethod.POST, "/qrcode").permitAll()

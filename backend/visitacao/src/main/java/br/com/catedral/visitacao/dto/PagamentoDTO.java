@@ -22,10 +22,8 @@ public record PagamentoDTO(
     @NotBlank(message = "Método de pagamento não pode ser nulo")
     String metodoPagamento,
     
-    LocalDateTime dataPagamento,
+    LocalDateTime dataPagamento
     
-    @NotNull(message = "Ingresso não pode ser nulo")
-    Long idIngresso
 ) {
 
     public static PagamentoDTO toDto(Pagamento pagamento) {
@@ -34,8 +32,7 @@ public record PagamentoDTO(
             pagamento.getStatusPagamentoEnum(),
             pagamento.getValor(),
             pagamento.getMetodoPagamento(),
-            pagamento.getDataPagamento(),
-            pagamento.getIngresso().getId()
+            pagamento.getDataPagamento()
         );
     }
 }

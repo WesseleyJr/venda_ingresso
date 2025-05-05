@@ -1,9 +1,12 @@
 package br.com.catedral.visitacao.dto;
 
+import java.time.LocalDate;
+
 import br.com.catedral.visitacao.constants.StatusIngressoEnum;
 import br.com.catedral.visitacao.model.Agenda;
-import br.com.catedral.visitacao.model.Cliente;
 import br.com.catedral.visitacao.model.Ingresso;
+import br.com.catedral.visitacao.model.Pagamento;
+import br.com.catedral.visitacao.model.Usuario;
 import jakarta.validation.constraints.NotNull;
 
 public record IngressoInserirDTO(
@@ -14,16 +17,32 @@ public record IngressoInserirDTO(
     @NotNull(message = "ID da agenda não pode ser nulo")
     Long idAgenda,
 
-    @NotNull(message = "ID do cliente não pode ser nulo")
-    Long idCliente
+    @NotNull(message = "ID do pagamento não pode ser nulo")
+    Long idPagamento,
+
+    String nomeCompleto,
+
+    String celular,
+
+    LocalDate dataNascimento,
+
+    String nomeResponsavel,
+    
+    @NotNull(message = "ID do usuário não pode ser nulo")
+    Long idUsuario
 
 ) {
 
-    public Ingresso toEntity(Agenda agenda, Cliente cliente) {
+    public Ingresso toEntity(Agenda agenda, Pagamento pagamento, Usuario usuario) {
         Ingresso ingresso = new Ingresso();
         ingresso.setStatusIngressoEnum(statusIngressoEnum);
         ingresso.setAgenda(agenda);
-        ingresso.setCliente(cliente);
+        ingresso.setPagamento(pagamento);
+        ingresso.setNomeCompleto(nomeCompleto);
+        ingresso.setCelular(celular);
+        ingresso.setDataNascimento(dataNascimento);
+        ingresso.setNomeResponsavel(nomeResponsavel);
+        ingresso.setUsuario(usuario);
         return ingresso;
     }
 
@@ -31,7 +50,12 @@ public record IngressoInserirDTO(
         return new IngressoInserirDTO(
             ingresso.getStatusIngressoEnum(),
             ingresso.getAgenda().getId(),
-            ingresso.getCliente().getId()
+            ingresso.getPagamento().getId(),
+            ingresso.getNomeCompleto(),
+            ingresso.getCelular(),
+            ingresso.getDataNascimento(),
+            ingresso.getNomeResponsavel(),
+            ingresso.getUsuario().getId()
         );
     }
 }

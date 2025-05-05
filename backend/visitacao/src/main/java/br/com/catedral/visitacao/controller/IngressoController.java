@@ -33,9 +33,9 @@ public class IngressoController {
 
     @Operation(summary = "Cadastro do ingresso", description = "Cadastro do ingresso dado o determinado BODY")
     @PostMapping
-    public ResponseEntity<IngressoDTO> inserir(@RequestBody @Valid IngressoInserirDTO dto) {
-        IngressoDTO ingressoCriado = ingressoService.inserir(dto);
-        return ResponseEntity.ok(ingressoCriado);
+    public ResponseEntity<List<IngressoDTO>> inserir(@RequestBody @Valid List<IngressoInserirDTO> dtos) {
+    	List<IngressoDTO> ingressosCriados = ingressoService.inserirLista(dtos);
+        return ResponseEntity.ok(ingressosCriados);
     }
 
     @Operation(summary = "Atualiza o ingresso pelo id", description = "Dado um determinado id e as informações, será atualizado os dados de cadastro do ingresso")

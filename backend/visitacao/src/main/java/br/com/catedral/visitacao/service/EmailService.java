@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -20,6 +21,8 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import br.com.catedral.visitacao.model.Usuario;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.util.ByteArrayDataSource;
+
 
 @Component
 public class EmailService {
@@ -101,6 +104,29 @@ public class EmailService {
 	        e.printStackTrace();
 	    }
 	    return CompletableFuture.completedFuture("email enviado com sucesso");
+	}
+	
+	@Async
+	public CompletableFuture<String> enviarEmailComPdf(String emailDestino, String assunto, byte[] pdfData) {
+	    MimeMessage message = javaMailSender.createMimeMessage();
+	    
+	    try {
+	        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+	        helper.setSubject(assunto);
+	        helper.setFrom("Catedral São Pedro de Alcântara <" + emailUsername + ">");
+	        helper.setTo(emailDestino);
+
+	        ByteArrayDataSource dataSource = new ByteArrayDataSource(pdfData, "application/pdf");
+	        helper.setText("Segue o PDF em anexo.", false);
+	        helper.addAttachment("ingressos.pdf", dataSource);
+
+	        javaMailSender.send(message);
+
+	        return CompletableFuture.completedFuture("Email enviado com sucesso");
+	    } catch (MailException | MessagingException e) {
+	        e.printStackTrace();
+	        return CompletableFuture.completedFuture("Erro ao enviar o e-mail: " + e.getMessage());
+	    }
 	}
 
 }

@@ -2,6 +2,7 @@ package br.com.catedral.visitacao.controller;
 
 import br.com.catedral.visitacao.dto.PagamentoDTO;
 import br.com.catedral.visitacao.dto.PagamentoInserirDTO;
+import br.com.catedral.visitacao.dto.PagamentoStatusDTO;
 import br.com.catedral.visitacao.service.PagamentoService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -59,5 +60,13 @@ public class PagamentoController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    
+    @Operation(summary = "Atualiza o status do pagamento pelo id", description = "Atualiza apenas o status de um pagamento existente.")
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<PagamentoDTO> atualizarStatus(@PathVariable Long id, @Valid @RequestBody PagamentoStatusDTO pagamentoStatusDTO) {
+        Optional<PagamentoDTO> pagamentoDTO = pagamentoService.atualizarStatus(id, pagamentoStatusDTO);
+
+        return pagamentoDTO.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
