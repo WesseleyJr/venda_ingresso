@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import br.com.catedral.visitacao.constants.GeneroEnum;
 import br.com.catedral.visitacao.constants.StatusIngressoEnum;
 import jakarta.persistence.CascadeType;
@@ -40,6 +42,7 @@ public class Ingresso {
 	@ManyToOne
     @JoinColumn(name = "id_agenda", referencedColumnName = "id")
 	@NotNull
+	@JsonManagedReference
     private Agenda agenda;
 	
 	@ManyToOne
@@ -69,7 +72,7 @@ public class Ingresso {
     private Usuario usuario;
 
 	@OneToOne
-	private QrCode qrCode = new QrCode();
+	private QrCode qrCode;
 	
 	public Pagamento getPagamento() {
 		return pagamento;

@@ -179,7 +179,7 @@ export const Agenda = () => {
                     <SelectQntIngresso qntIngresso={vagas} handleFunction={(item)=>setQntIngresso(item)}/>
                       <ButtonType
                         handleFunction={() => {
-                          navigation.navigate('Cadastro/cliente')
+                          navigation.navigate('Cadastro/ingresso')
                         }}
                         title={"Continuar"}
                         propsBackgroundColor="#661111"

@@ -1,18 +1,16 @@
 import {
   ImageBackground,
-  Keyboard,
-  KeyboardAvoidingView,
   Linking,
   ScrollView,
   Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { styles } from "./style";
 import { Header } from "../../components/Header";
-import { Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
+
+import { FontAwesome5, AntDesign } from '@expo/vector-icons';
 
 export const Home = () => {
   const openInstagram = () => {
@@ -34,15 +32,17 @@ export const Home = () => {
   const callPhone = () => {
     Linking.openURL("tel:+552422379027");
   };
-  const navigation = useNavigation()
+
+  const navigation = useNavigation();
+
   return (
     <>
       <Header />
       <View style={styles.container}>
         <View style={styles.content}>
-          <TouchableOpacity style={styles.innerButton} onPress={()=> navigation.navigate('Agenda')}>
+          <TouchableOpacity style={styles.innerButton} onPress={() => navigation.navigate('Agenda')}>
             <ImageBackground
-              source={require("../../assets/images/CatedralKoeller.png")} 
+              source={require("../../assets/images/CatedralKoeller.png")}
               style={styles.button}
               imageStyle={{ borderRadius: 20 }}
             >
@@ -57,20 +57,16 @@ export const Home = () => {
             <Text style={styles.buttonTextType}>Missas</Text>
           </TouchableOpacity>
         </View>
+
         <View style={styles.contentRedes}>
           <TouchableOpacity style={styles.buttonRedes} onPress={openFacebook}>
-            <Icon
-              name="facebook"
-              type="fontawesome5brands"
-              color="#000"
-              size={35}
-            />
+            <FontAwesome5 name="facebook" color="#000" size={35} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.buttonRedes} onPress={openInstagram}>
-            <Icon name="instagram" type="antdesign" color="#000" size={35} />
+            <AntDesign name="instagram" color="#000" size={35} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.buttonRedes} onPress={callPhone}>
-            <Icon name="phone" type="FontAwesome5" color="#000" size={35} />
+            <FontAwesome5 name="phone" color="#000" size={35} />
           </TouchableOpacity>
         </View>
       </View>

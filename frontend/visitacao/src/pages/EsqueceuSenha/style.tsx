@@ -23,11 +23,12 @@ export const styles = StyleSheet.create({
     marginBottom: 30,
   },
   input: {
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,
     width: "100%",
+    height: 50,
   },
   button: {
     backgroundColor: "#661111",

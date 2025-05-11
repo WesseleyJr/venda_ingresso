@@ -1,5 +1,6 @@
 import {
   KeyboardAvoidingView,
+  Platform,
   ScrollView,
   Text,
   TextInput,
@@ -9,37 +10,38 @@ import { HeaderReturn } from "../../components/HeaderReturn";
 import { useNavigation } from "@react-navigation/native";
 import { styles } from "./style";
 import { useEffect, useState } from "react";
-import { FormDataCliente } from "../../@types/api";
+import { FormDataCliente, FormDataIngresso } from "../../@types/api";
 import DataNascimento from "../../components/DataNascimento";
 import { SelectGenero } from "../../components/SelectGenero";
 import { ButtonType } from "../../components/ButtonType";
 import { useCompraContext } from "../../hooks/compraContext";
-import { postCliente } from "../../service/clienteService";
+import { postIngresso } from "../../service/ingressoService";
 import { useApiUrl } from "../../hooks/ApiUrlContext";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const CadastroCliente = () => {
+export const CadastroIngresso = () => {
     const navigation = useNavigation();
-    const { qntIngresso } = useCompraContext();
+    const { qntIngresso, agendaId } = useCompraContext();
     const { apiUrl } = useApiUrl();
-    
-    const [menorIdade, setMenorIdade] = useState<boolean>(false);
-    const [formDataList, setFormDataList] = useState<FormDataCliente[]>([]);
+    const [formDataList, setFormDataList] = useState<FormDataIngresso[]>([]);
     
     useEffect(() => {
       const fetchUserId = async () => {
         const storedIdUsuario = await AsyncStorage.getItem("@userId");
-        const parsedIdUsuario = storedIdUsuario ? Number(storedIdUsuario) : null;
+        const parsedIdUsuario = storedIdUsuario ? Number(storedIdUsuario) : 0;
+        const parsedIdAgenda = agendaId ? agendaId : 0;
     
         if (parsedIdUsuario !== null) {
           const initialFormData = Array.from({ length: qntIngresso }, () => ({
+            statusIngressoEnum: "PENDENTE",
+            idAgenda: parsedIdAgenda,
             nomeCompleto: "",
             celular: "",
             dataNascimento: "",
-            nomeResponsavel: "",
-            genero: "MASCULINO",
+            nomeResponsavel: '',
             idUsuario: parsedIdUsuario,
+            idPagamento: 0,
           }));
     
           setFormDataList(initialFormData);
@@ -51,7 +53,7 @@ export const CadastroCliente = () => {
 
   const handleInputChange = (
     index: number,
-    field: keyof FormData,
+    field: keyof FormDataIngresso,
     value: string
   ) => {
     setFormDataList((prev) => {
@@ -115,7 +117,7 @@ export const CadastroCliente = () => {
       console.log(cleanFormDataList);
       
     try {
-      const response = await postCliente(cleanFormDataList, apiUrl);
+      const response = await postIngresso(cleanFormDataList, apiUrl);
       Toast.show({
         type: "success",
         text1: "Cliente cadastrado!",
@@ -148,7 +150,7 @@ export const CadastroCliente = () => {
         }}
         behavior="padding"
         enabled
-        keyboardVerticalOffset={10}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 20}
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <View style={styles.container}>
@@ -181,12 +183,6 @@ export const CadastroCliente = () => {
                 <DataNascimento
                   onDateSelected={(date) => handleIdade(index, date)}
                 />
-                <SelectGenero
-                  handleFunction={(item) =>
-                    handleInputChange(index, "genero", item)
-                  }
-                />
-
                 {menorIdadeList[index] && (
                   <View style={styles.inputContent}>
                     <Text style={styles.label}>Nome do responsável:</Text>

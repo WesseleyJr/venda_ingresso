@@ -7,7 +7,7 @@ import { CadastroUser } from "../pages/CadastroUser";
 import { EsqueceuSenha } from "../pages/EsqueceuSenha";
 import { Home } from "../pages/Home";
 import { Agenda } from "../pages/Agenda";
-import { CadastroCliente } from "../pages/CadastroCliente";
+import { CadastroIngresso } from "../pages/CadastroIngresso";
 
 const Stack = createNativeStackNavigator();
 
@@ -45,7 +45,7 @@ export const StackRouters = () => {
       <Stack.Screen name="Esqueceu/senha" component={EsqueceuSenha} />
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Agenda" component={Agenda} />
-      <Stack.Screen name="Cadastro/cliente" component={CadastroCliente} />
+      <Stack.Screen name="Cadastro/ingresso" component={CadastroIngresso} />
     </Stack.Navigator>
   );
 };

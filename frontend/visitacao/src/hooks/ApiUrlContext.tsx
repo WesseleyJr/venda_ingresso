@@ -10,7 +10,7 @@ const ApiUrlContext = createContext<ApiUrlContextType>({
 });
 
 export const ApiUrlProvider = ({ children }: { children: ReactNode }) => {
-  const [apiUrl] = useState<string>('http://192.168.201.78:8080');
+  const [apiUrl] = useState<string>('http://192.168.0.100:8080');
 
   return (
     <ApiUrlContext.Provider value={{ apiUrl }}>

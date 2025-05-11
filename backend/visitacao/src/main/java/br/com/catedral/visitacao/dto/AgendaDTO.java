@@ -2,9 +2,9 @@ package br.com.catedral.visitacao.dto;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import br.com.catedral.visitacao.model.Agenda;
-import br.com.catedral.visitacao.model.Ingresso;
 import jakarta.validation.constraints.NotNull;
 
 public record AgendaDTO(
@@ -20,7 +20,7 @@ public record AgendaDTO(
     @NotNull(message = "Capacidade não pode ser nulo")
     Integer capacidade,
 
-    Set<Ingresso> ingressos,
+    Set<IngressoDTO> ingressos,
 
     @NotNull(message = "Nome do guia não pode ser nulo")
     String nomeGuia
@@ -28,12 +28,16 @@ public record AgendaDTO(
 ) {
 
     public static AgendaDTO toDto(Agenda agenda) {
+        Set<IngressoDTO> ingressoDTOs = agenda.getIngressos().stream()
+            .map(IngressoDTO::toDto)
+            .collect(Collectors.toSet());
+
         return new AgendaDTO(
             agenda.getId(),
             agenda.getDataHora(),
             agenda.getPreco(),
             agenda.getCapacidade(),
-            agenda.getIngressos(),
+            ingressoDTOs,
             agenda.getGuia().getNomeCompleto()
         );
     }
@@ -43,7 +47,6 @@ public record AgendaDTO(
         agenda.setDataHora(dataHora);
         agenda.setPreco(preco);
         agenda.setCapacidade(capacidade);
-        agenda.setIngressos(ingressos);
         return agenda;
     }
 }

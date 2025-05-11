@@ -23,11 +23,6 @@ export const styles = StyleSheet.create({
     paddingVertical: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: 'rgb(0, 0, 0)',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.25,
-    shadowRadius: 15,
-    elevation: 8,
   },
   innerButton: {
     justifyContent: "center",
@@ -48,11 +43,6 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#4b0a0a",
     borderRadius: 20,
-    shadowColor: "rgb(0, 0, 0)",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.25,
-    shadowRadius: 15,
-    elevation: 8,
   },
   buttonTypeMIssas: {
     width: "100%",

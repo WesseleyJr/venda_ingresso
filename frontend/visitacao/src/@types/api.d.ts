@@ -69,3 +69,25 @@ export type FormDataCliente = {
   genero: string;
   idUsuario: number;
 };
+
+export type FormDataEmailEsqueceuSenha = {
+  email: string;
+}
+
+export type FormDataRedefinirSenha = {
+  token: string;
+  novaSenha: string;
+  confirmaSenha: string;
+}
+
+export type FormDataIngresso = {
+  statusIngressoEnum: string,
+  idAgenda: number,
+  nomeCompleto: string,
+  celular: string,
+  dataNascimento: string,
+  nomeResponsavel: string,
+  idUsuario: number,
+  idPagamento: number
+}
+

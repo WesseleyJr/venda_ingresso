@@ -6,11 +6,15 @@ export const getAgendaMes = async (mes: number, apiUrl: string) => {
 
   try {
     const response = await axios.get(`${apiUrl}/agenda/mes/${mes}`, {headers:{Authorization: token}});
+    console.log(response);
+    
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw error.response?.data || error;
     } else {
+      console.log(error);
+      
       throw error;
     }
   }
