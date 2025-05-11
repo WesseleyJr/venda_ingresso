@@ -1,6 +1,6 @@
+import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { styles } from "./style";
-import { Icon } from "react-native-elements";
 import { useState } from "react";
 
 interface PropsInput {
@@ -19,42 +19,39 @@ export const TextInputField = ({
   hadleFunctionInput,
 }: PropsInput) => {
   const [viewPassword, setViewPassword] = useState<boolean>(true);
+
   return (
     <>
       {propsShowEye === false ? (
-        <>
-          <View style={styles.container}>
-            <TextInput
-              onChangeText={hadleFunctionInput}
-              style={styles.input}
-              placeholder={placeHolder}
-              placeholderTextColor="#000"
-              secureTextEntry={propsShowEye ? viewPassword : typeInput}
-              value={valueInput}
-            />
-            <Icon name="user" type="font-awesome-5" />
-          </View>
-        </>
+        <View style={styles.container}>
+          <TextInput
+            onChangeText={hadleFunctionInput}
+            style={styles.input}
+            placeholder={placeHolder}
+            placeholderTextColor="#000"
+            secureTextEntry={propsShowEye ? viewPassword : typeInput}
+            value={valueInput}
+          />
+          <FontAwesome5 name="user" size={20} color="#000" />
+        </View>
       ) : (
-        <>
-          <View style={styles.container}>
-            <TextInput
-              onChangeText={hadleFunctionInput}
-              style={styles.input}
-              placeholder={placeHolder}
-              placeholderTextColor="#000"
-              secureTextEntry={propsShowEye ? viewPassword : typeInput}
-              value={valueInput}
-            />
-            <TouchableOpacity onPress={() => setViewPassword(!viewPassword)}>
-              {viewPassword ? (
-                <Icon name="eye" type="font-awesome-5" />
-              ) : (
-                <Icon name="eye-slash" type="font-awesome-5" />
-              )}
-            </TouchableOpacity>
-          </View>
-        </>
+        <View style={styles.container}>
+          <TextInput
+            onChangeText={hadleFunctionInput}
+            style={styles.input}
+            placeholder={placeHolder}
+            placeholderTextColor="#000"
+            secureTextEntry={propsShowEye ? viewPassword : typeInput}
+            value={valueInput}
+          />
+          <TouchableOpacity onPress={() => setViewPassword(!viewPassword)}>
+            {viewPassword ? (
+              <Ionicons name="eye" size={24} color="#000" />
+            ) : (
+              <Ionicons name="eye-off" size={24} color="#000" />
+            )}
+          </TouchableOpacity>
+        </View>
       )}
     </>
   );

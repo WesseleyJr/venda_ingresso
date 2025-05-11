@@ -75,6 +75,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUserId(decoded.id);
         setTimeOut(decoded.exp);
         setRole(decoded.role);
+        console.log(decoded.role);
+        
 
         await AsyncStorage.setItem("@token", token);
         await AsyncStorage.setItem("@email", decoded.sub);
