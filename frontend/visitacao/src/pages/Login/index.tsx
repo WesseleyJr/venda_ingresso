@@ -86,7 +86,8 @@ export const Login = () => {
                   <View>
                     <TouchableOpacity
                       style={styles.buttonEntrar}
-                      onPress={() => navigate.navigate("Esqueceu/senha")}
+                      onPress={() => {
+                        navigate.navigate("Esqueceu/senha")}}
                     >
                       <Text style={styles.buttonText}>Clique aqui</Text>
                     </TouchableOpacity>

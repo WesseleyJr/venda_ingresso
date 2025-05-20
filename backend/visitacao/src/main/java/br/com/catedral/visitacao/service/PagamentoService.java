@@ -2,6 +2,7 @@ package br.com.catedral.visitacao.service;
 
 import br.com.catedral.visitacao.constants.StatusIngressoEnum;
 import br.com.catedral.visitacao.constants.StatusPagamentoEnum;
+import br.com.catedral.visitacao.dto.PagamentoComCheckoutDTO;
 import br.com.catedral.visitacao.dto.PagamentoDTO;
 import br.com.catedral.visitacao.dto.PagamentoInserirDTO;
 import br.com.catedral.visitacao.dto.PagamentoStatusDTO;
@@ -37,17 +38,23 @@ public class PagamentoService {
 
     @Autowired
     private GeradorPdfService geradorPdfService;
+
+    @Autowired
+    private MercadoPagoService mercadoPagoService;
     
     @Autowired
     private EmailService emailService;
 
-    public PagamentoDTO inserir(PagamentoInserirDTO dto) {
+    public PagamentoComCheckoutDTO inserir(PagamentoInserirDTO dto) throws IOException {
 
         Pagamento pagamento = dto.toEntity();
 
         Pagamento pagamentoSalvo = pagamentoRepository.save(pagamento);
+        PagamentoDTO pagamentoDTO = PagamentoDTO.toDto(pagamentoSalvo);
+        
+        String checkoutUrl = mercadoPagoService.criarPreferencia(pagamentoDTO.valor(), "Ingresso Torre, Catedral São Pedro de Alcântara", pagamentoSalvo.getId());
 
-        return PagamentoDTO.toDto(pagamentoSalvo);
+        return new PagamentoComCheckoutDTO(pagamentoDTO, checkoutUrl);
     }
 
     public List<PagamentoDTO> buscarTodos() {
@@ -99,6 +106,14 @@ public class PagamentoService {
 
         pagamento.setStatusPagamentoEnum(dto.statusPagamentoEnum());
 
+        if (dto.dataPagamento() != null) {
+            pagamento.setDataPagamento(dto.dataPagamento());
+        }
+
+        if (dto.metodoPagamento() != null && !dto.metodoPagamento().isBlank()) {
+            pagamento.setMetodoPagamento(dto.metodoPagamento());
+        }
+
         Pagamento atualizado = pagamentoRepository.save(pagamento);
 
         Set<Ingresso> ingressos = pagamento.getIngressos();
@@ -124,10 +139,10 @@ public class PagamentoService {
             ingressoRepository.save(ingresso);
         }
 
-        if (listaQrCodes.size() > 0) {
+        if (!listaQrCodes.isEmpty()) {
             try {
                 byte[] pdfData = geradorPdfService.gerarPdfComQrCodes(new ArrayList<>(ingressos), listaQrCodes);
-                
+
                 String emailDestino = pagamento.getIngressos().iterator().next().getUsuario().getEmail();
                 String assunto = "Ingressos Ativados - Catedral São Pedro de Alcântara";
                 emailService.enviarEmailComPdf(emailDestino, assunto, pdfData);
@@ -138,5 +153,8 @@ public class PagamentoService {
 
         return Optional.of(PagamentoDTO.toDto(atualizado));
     }
+
     
+    
+
 }

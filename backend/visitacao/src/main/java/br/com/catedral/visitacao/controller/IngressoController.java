@@ -1,5 +1,6 @@
 package br.com.catedral.visitacao.controller;
 
+import br.com.catedral.visitacao.dto.IngressoComCheckoutDTO;
 import br.com.catedral.visitacao.dto.IngressoDTO;
 import br.com.catedral.visitacao.dto.IngressoInserirDTO;
 import br.com.catedral.visitacao.service.IngressoService;
@@ -7,9 +8,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -33,10 +36,17 @@ public class IngressoController {
 
     @Operation(summary = "Cadastro do ingresso", description = "Cadastro do ingresso dado o determinado BODY")
     @PostMapping
-    public ResponseEntity<List<IngressoDTO>> inserir(@RequestBody @Valid List<IngressoInserirDTO> dtos) {
-    	List<IngressoDTO> ingressosCriados = ingressoService.inserirLista(dtos);
-        return ResponseEntity.ok(ingressosCriados);
+    public ResponseEntity<IngressoComCheckoutDTO> inserir(@RequestBody @Valid List<IngressoInserirDTO> dtos) {
+        try {
+            IngressoComCheckoutDTO response = ingressoService.inserirLista(dtos);
+            return ResponseEntity.ok(response);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
+
+
+
 
     @Operation(summary = "Atualiza o ingresso pelo id", description = "Dado um determinado id e as informações, será atualizado os dados de cadastro do ingresso")
     @PutMapping("/{id}")

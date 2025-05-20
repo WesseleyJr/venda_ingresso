@@ -20,6 +20,7 @@ import {
 } from "../../@types/api";
 import Toast from "react-native-toast-message";
 import { TextInputField } from "../../components/TextInput";
+import { useAuth } from "../../hooks/useAuth";
 
 export const EsqueceuSenha = () => {
   const { apiUrl } = useApiUrl();
@@ -33,6 +34,8 @@ export const EsqueceuSenha = () => {
     confirmaSenha: "",
   });
 
+  const { handleLogOut } = useAuth();
+  
   const handleEmail = async () => {
     setAguarde(true);
     const data: FormDataEmailEsqueceuSenha = {
@@ -59,14 +62,14 @@ export const EsqueceuSenha = () => {
 
   const handleRedefinirSenha = async () => {
     setAguarde(true);
-
+    handleLogOut()
     try {
       const response = await postRedefinirSenha(form, apiUrl);
       Toast.show({
         type: "success",
         text1: response.data,
       });
-      setInterval(() => {
+      setTimeout(() => {
         navigation.navigate("Login");
       }, 1000);
     } catch (error: any) {

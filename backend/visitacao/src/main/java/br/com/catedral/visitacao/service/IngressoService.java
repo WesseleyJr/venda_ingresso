@@ -2,8 +2,10 @@ package br.com.catedral.visitacao.service;
 
 import br.com.catedral.visitacao.constants.StatusIngressoEnum;
 import br.com.catedral.visitacao.constants.StatusPagamentoEnum;
+import br.com.catedral.visitacao.dto.IngressoComCheckoutDTO;
 import br.com.catedral.visitacao.dto.IngressoDTO;
 import br.com.catedral.visitacao.dto.IngressoInserirDTO;
+import br.com.catedral.visitacao.dto.PagamentoComCheckoutDTO;
 import br.com.catedral.visitacao.dto.PagamentoDTO;
 import br.com.catedral.visitacao.dto.PagamentoInserirDTO;
 import br.com.catedral.visitacao.model.Agenda;
@@ -20,6 +22,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,99 +31,95 @@ import java.util.stream.Collectors;
 @Service
 public class IngressoService {
 
-    @Autowired
-    private IngressoRepository ingressoRepository;
+	@Autowired
+	private IngressoRepository ingressoRepository;
 
-    @Autowired
-    private AgendaRepository agendaRepository;
+	@Autowired
+	private AgendaRepository agendaRepository;
 
-    @Autowired
-    private PagamentoRepository pagamentoRepository;
-    
-    @Autowired
-    private PagamentoService pagamentoService;
-    
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
 
-    public List<IngressoDTO> listarTodos() {
-        return ingressoRepository.findAll()
-                .stream()
-                .map(IngressoDTO::toDto)
-                .collect(Collectors.toList());
-    }
+	@Autowired
+	private PagamentoService pagamentoService;
 
-    public IngressoDTO buscarPorId(Long id) {
-        Ingresso ingresso = ingressoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Ingresso não encontrado"));
-        return IngressoDTO.toDto(ingresso);
-    }
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 
-    @Transactional
-    public List<IngressoDTO> inserirLista(List<IngressoInserirDTO> dtos) {
-        List<IngressoDTO> ingressosCriados = new ArrayList<>();
-        
-        double valor = 0;
-        
-        for (IngressoInserirDTO dto : dtos) {
-        	Long idAgenda = dto.idAgenda();
-        	Optional<Agenda> agendaOPT = agendaRepository.findById(idAgenda);
-        	
-        	valor += agendaOPT.get().getPreco();
-        	
-        }
-        
-        PagamentoInserirDTO pagamentoInserirDTO = new PagamentoInserirDTO(StatusPagamentoEnum.PENDENTE, valor, "PIX", null);
-        
-        PagamentoDTO pagamentoDTO = pagamentoService.inserir(pagamentoInserirDTO);
-        
-        
+	public List<IngressoDTO> listarTodos() {
+		return ingressoRepository.findAll().stream().map(IngressoDTO::toDto).collect(Collectors.toList());
+	}
 
-        for (IngressoInserirDTO dto : dtos) {
-        	
-        	dto = new IngressoInserirDTO(StatusIngressoEnum.PENDENTE, dto.idAgenda(), pagamentoDTO.id(), dto.nomeCompleto(), dto.celular(), dto.dataNascimento(), dto.nomeResponsavel(), dto.idUsuario());
-        	
-            Agenda agenda = agendaRepository.findById(dto.idAgenda())
-                    .orElseThrow(() -> new EntityNotFoundException("Agenda não encontrada"));
+	public IngressoDTO buscarPorId(Long id) {
+		Ingresso ingresso = ingressoRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Ingresso não encontrado"));
+		return IngressoDTO.toDto(ingresso);
+	}
 
-            Pagamento pagamento = pagamentoRepository.findById(dto.idPagamento())
-                    .orElseThrow(() -> new EntityNotFoundException("Pagamento não encontrado"));
+	@Transactional
+	public IngressoComCheckoutDTO inserirLista(List<IngressoInserirDTO> dtos) throws IOException {
+		List<IngressoDTO> ingressosCriados = new ArrayList<>();
 
-            Usuario usuario = usuarioRepository.findById(dto.idUsuario())
-                    .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+		double valor = 0;
 
-            Ingresso ingresso = dto.toEntity(agenda, pagamento, usuario);
+		for (IngressoInserirDTO dto : dtos) {
+			Long idAgenda = dto.idAgenda();
+			Optional<Agenda> agendaOPT = agendaRepository.findById(idAgenda);
+			valor += agendaOPT.get().getPreco();
+		}
 
-            ingressoRepository.save(ingresso);
-            ingressosCriados.add(IngressoDTO.toDto(ingresso));
-        }
+		PagamentoInserirDTO pagamentoInserirDTO = new PagamentoInserirDTO(StatusPagamentoEnum.PENDENTE, valor, "PIX",
+				null);
 
-        return ingressosCriados;
-    }
+		PagamentoComCheckoutDTO pagamentoComCheckoutDTO = pagamentoService.inserir(pagamentoInserirDTO);
+		String urlCheckout = pagamentoComCheckoutDTO.getCheckoutUrl();
 
-    @Transactional
-    public IngressoDTO atualizar(Long id, IngressoInserirDTO dto) {
-        Ingresso ingresso = ingressoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Ingresso não encontrado"));
+		for (IngressoInserirDTO dto : dtos) {
+			dto = new IngressoInserirDTO(StatusIngressoEnum.PENDENTE, dto.idAgenda(),
+					pagamentoComCheckoutDTO.getPagamento().id(), dto.nomeCompleto(), dto.celular(),
+					dto.dataNascimento(), dto.nomeResponsavel(), dto.idUsuario());
 
-        Agenda agenda = agendaRepository.findById(dto.idAgenda())
-                .orElseThrow(() -> new EntityNotFoundException("Agenda não encontrada"));
+			Agenda agenda = agendaRepository.findById(dto.idAgenda())
+					.orElseThrow(() -> new EntityNotFoundException("Agenda não encontrada"));
 
-        Pagamento pagamento = pagamentoRepository.findById(dto.idPagamento())
-                .orElseThrow(() -> new EntityNotFoundException("Pagamento não encontrado"));
+			Pagamento pagamento = pagamentoRepository.findById(dto.idPagamento())
+					.orElseThrow(() -> new EntityNotFoundException("Pagamento não encontrado"));
 
-        ingresso.setStatusIngressoEnum(dto.statusIngressoEnum());
-        ingresso.setAgenda(agenda);
-        ingresso.setPagamento(pagamento);
-        ingressoRepository.save(ingresso);
+			Usuario usuario = usuarioRepository.findById(dto.idUsuario())
+					.orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
 
-        return IngressoDTO.toDto(ingresso);
-    }
+			Ingresso ingresso = dto.toEntity(agenda, pagamento, usuario);
 
-    public void deletar(Long id) {
-        if (!ingressoRepository.existsById(id)) {
-            throw new EntityNotFoundException("Ingresso não encontrado");
-        }
-        ingressoRepository.deleteById(id);
-    }
+			ingressoRepository.save(ingresso);
+			ingressosCriados.add(IngressoDTO.toDto(ingresso));
+		}
+
+		return new IngressoComCheckoutDTO(ingressosCriados, urlCheckout);
+	}
+
+	@Transactional
+	public IngressoDTO atualizar(Long id, IngressoInserirDTO dto) {
+		Ingresso ingresso = ingressoRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Ingresso não encontrado"));
+
+		Agenda agenda = agendaRepository.findById(dto.idAgenda())
+				.orElseThrow(() -> new EntityNotFoundException("Agenda não encontrada"));
+
+		Pagamento pagamento = pagamentoRepository.findById(dto.idPagamento())
+				.orElseThrow(() -> new EntityNotFoundException("Pagamento não encontrado"));
+
+		ingresso.setStatusIngressoEnum(dto.statusIngressoEnum());
+		ingresso.setAgenda(agenda);
+		ingresso.setPagamento(pagamento);
+		ingressoRepository.save(ingresso);
+
+		return IngressoDTO.toDto(ingresso);
+	}
+
+	public void deletar(Long id) {
+		if (!ingressoRepository.existsById(id)) {
+			throw new EntityNotFoundException("Ingresso não encontrado");
+		}
+		ingressoRepository.deleteById(id);
+	}
 }

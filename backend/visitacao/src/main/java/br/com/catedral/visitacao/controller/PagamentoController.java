@@ -1,5 +1,6 @@
 package br.com.catedral.visitacao.controller;
 
+import br.com.catedral.visitacao.dto.PagamentoComCheckoutDTO;
 import br.com.catedral.visitacao.dto.PagamentoDTO;
 import br.com.catedral.visitacao.dto.PagamentoInserirDTO;
 import br.com.catedral.visitacao.dto.PagamentoStatusDTO;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,13 +26,18 @@ public class PagamentoController {
 
     @Operation(summary = "Cadastro do pagamento", description = "Cadastro do pagamento dado o determinado BODY")
     @PostMapping
-    public ResponseEntity<PagamentoDTO> inserir(@Valid @RequestBody PagamentoInserirDTO pagamentoInserirDTO) {
-        PagamentoDTO pagamentoDTO = pagamentoService.inserir(pagamentoInserirDTO);
-        if (pagamentoDTO != null) {
-            return new ResponseEntity<>(pagamentoDTO, HttpStatus.CREATED);
+    public ResponseEntity<PagamentoComCheckoutDTO> inserir(@Valid @RequestBody PagamentoInserirDTO pagamentoInserirDTO) {
+        try {
+            PagamentoComCheckoutDTO pagamentoComCheckoutDTO = pagamentoService.inserir(pagamentoInserirDTO);
+            if (pagamentoComCheckoutDTO != null) {
+                return new ResponseEntity<>(pagamentoComCheckoutDTO, HttpStatus.CREATED);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
 
     @Operation(summary = "Retorna todas os pagamentos", description = "Lista todos os pagamentos")
     @GetMapping
