@@ -66,7 +66,7 @@ export const EsqueceuSenha = () => {
         type: "success",
         text1: response.data,
       });
-      setInterval(() => {
+      setTimeout(() => {
         navigation.navigate("Login");
       }, 1000);
     } catch (error: any) {

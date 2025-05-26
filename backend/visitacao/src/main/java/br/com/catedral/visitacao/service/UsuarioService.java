@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.catedral.visitacao.dto.UsuarioCpfDTO;
 import br.com.catedral.visitacao.dto.UsuarioDTO;
 import br.com.catedral.visitacao.dto.UsuarioInserirDTO;
 import br.com.catedral.visitacao.exception.EmailException;
@@ -80,6 +81,24 @@ public class UsuarioService {
 	    UsuarioDTO usuarioDTO = new UsuarioDTO(usuario);
 	    return usuarioDTO;
 	}
-
+	
+	public UsuarioDTO inserirCpf(UsuarioCpfDTO usuarioInserirDTO, Long id) {
+		 Optional<Usuario> usuarioOPT = usuarioRepository.findById(id);
+		 
+		 if(usuarioOPT.isPresent()) {
+			 
+			 Usuario usuario = usuarioOPT.get();
+			 
+			 usuario.setCpf(usuarioInserirDTO.getCpf());
+			 
+			 Usuario usuarioAtualizado = usuarioRepository.save(usuario);
+			 
+			 UsuarioDTO usuarioDTO = new UsuarioDTO(usuarioAtualizado);
+			 
+			 return usuarioDTO;
+		 }
+		return null;
+		
+	}
 	
 }

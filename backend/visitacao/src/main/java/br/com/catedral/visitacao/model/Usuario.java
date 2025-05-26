@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,19 +51,21 @@ public class Usuario implements UserDetails, Serializable {
 
 	@NotBlank(message = "Senha não pode ser nulo")
 	private String senha;
-	
+
+	@Column(length = 11)
+	@Size(max = 11)
+	@CPF
+	private String cpf;
+
 	@OneToMany(mappedBy = "id.usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<UsuarioPerfil> usuarioPerfis = new HashSet<>();
-	
+
 	@OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Ingresso> ingressos = new HashSet<>();
-	
+
 	@OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Guia> guias = new HashSet<>();
-	
-	
-	
-	
+
 	public Set<Guia> getGuias() {
 		return guias;
 	}
@@ -70,7 +73,6 @@ public class Usuario implements UserDetails, Serializable {
 	public void setGuias(Set<Guia> guias) {
 		this.guias = guias;
 	}
-
 
 	public Set<Ingresso> getIngressos() {
 		return ingressos;
@@ -83,11 +85,17 @@ public class Usuario implements UserDetails, Serializable {
 	public Usuario() {
 	}
 
-	public Usuario(Long id, String nome, String email, String senha) {
+	public Usuario(Long id, String nome, String email, String senha, String cpf, Set<UsuarioPerfil> usuarioPerfis,
+			Set<Ingresso> ingressos, Set<Guia> guias) {
+		super();
 		this.id = id;
 		this.nome = nome;
 		this.email = email;
 		this.senha = senha;
+		this.cpf = cpf;
+		this.usuarioPerfis = usuarioPerfis;
+		this.ingressos = ingressos;
+		this.guias = guias;
 	}
 
 	public Long getId() {
@@ -121,13 +129,21 @@ public class Usuario implements UserDetails, Serializable {
 	public void setSenha(String senha) {
 		this.senha = senha;
 	}
-	
+
 	public Set<UsuarioPerfil> getUsuarioPerfis() {
 		return usuarioPerfis;
 	}
 
 	public void setUsuarioPerfis(Set<UsuarioPerfil> usuarioPerfis) {
 		this.usuarioPerfis = usuarioPerfis;
+	}
+
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
 	}
 
 	@Override
@@ -150,7 +166,7 @@ public class Usuario implements UserDetails, Serializable {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<GrantedAuthority> authorities = new ArrayList<>();
-		for (UsuarioPerfil usuarioPerfil: getUsuarioPerfis()) {
+		for (UsuarioPerfil usuarioPerfil : getUsuarioPerfis()) {
 			authorities.add(new SimpleGrantedAuthority(usuarioPerfil.getId().getPerfil().getNome()));
 		}
 		return authorities;
@@ -166,16 +182,9 @@ public class Usuario implements UserDetails, Serializable {
 		return email;
 	}
 
-	
 	@Override
 	public String toString() {
-		return "* Código: " + id +
-				"\n* Nome: " + nome + 
-				"\n* Email: " + email + 
-				"\n* Perfis: " + 
-				usuarioPerfis
-					.stream()
-					.map(up -> up.getId().getPerfil().getNome())
-					.collect(Collectors.joining(", "));
+		return "* Código: " + id + "\n* Nome: " + nome + "\n* Email: " + email + "\n* Perfis: "
+				+ usuarioPerfis.stream().map(up -> up.getId().getPerfil().getNome()).collect(Collectors.joining(", "));
 	};
 }

@@ -73,15 +73,6 @@ public class QrCodeService {
     private String gerarJsonQrCode(Ingresso ingresso) {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> dados = new LinkedHashMap<>();
-
-        dados.put("nome", ingresso.getNomeCompleto());
-        dados.put("celular", ingresso.getCelular());
-        dados.put("nomeResponsavel", ingresso.getNomeResponsavel());
-
-        LocalDateTime dataHora = ingresso.getAgenda().getDataHora();
-        dados.put("data", dataHora.toLocalDate().toString());
-        dados.put("hora", dataHora.toLocalTime().toString());
-        
         dados.put("id", ingresso.getId());
 
         try {

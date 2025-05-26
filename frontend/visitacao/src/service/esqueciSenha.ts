@@ -8,7 +8,6 @@ export const postEmail = async (data: FormDataEmailEsqueceuSenha, url: string ) 
     const response = await axios.post(`${url}/senha/esqueci`, data);
     return response;
   } catch (error) {
-    console.log(error);
     
     if (axios.isAxiosError(error)) {
       throw error.response?.data || error;
@@ -23,7 +22,6 @@ export const postRedefinirSenha = async (data: FormDataRedefinirSenha, url: stri
     const response = await axios.post(`${url}/senha/redefinir`, data);
     return response;
   } catch (error) {
-    console.log(error);
     
     if (axios.isAxiosError(error)) {
       throw error.response?.data || error;

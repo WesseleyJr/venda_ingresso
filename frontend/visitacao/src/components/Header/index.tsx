@@ -18,8 +18,10 @@ export const Header = () => {
     <View style={styles.container}>
       <Image style={styles.logo} source={Logo} />
       <TouchableOpacity style={styles.button} onPress={handleLogout}>
-        <Text style={styles.textSair}>Sair</Text>
-        <IconButton icon="logout" iconColor="#fff" size={20} />
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Text style={styles.textSair}>Sair</Text>
+          <IconButton icon="logout" iconColor="#fff" size={20} />
+        </View>
       </TouchableOpacity>
     </View>
   );

@@ -12,16 +12,25 @@ import br.com.catedral.visitacao.model.Pagamento;
 import br.com.catedral.visitacao.repository.IngressoRepository;
 import br.com.catedral.visitacao.repository.PagamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class PagamentoService {
@@ -40,6 +49,9 @@ public class PagamentoService {
     
     @Autowired
     private EmailService emailService;
+    
+	@Value("${mercadopago.access.token}")
+    private String mercadoPagoToken;
 
     public PagamentoDTO inserir(PagamentoInserirDTO dto) {
 
@@ -88,7 +100,7 @@ public class PagamentoService {
         return false;
     }
     
-    public Optional<PagamentoDTO> atualizarStatus(Long id, PagamentoStatusDTO dto) {
+    public Optional<PagamentoDTO> atualizarStatus(Long id, String status, String dateApprovedStr) {
         Optional<Pagamento> pagamentoOptional = pagamentoRepository.findById(id);
 
         if (pagamentoOptional.isEmpty()) {
@@ -97,7 +109,16 @@ public class PagamentoService {
 
         Pagamento pagamento = pagamentoOptional.get();
 
-        pagamento.setStatusPagamentoEnum(dto.statusPagamentoEnum());
+        StatusPagamentoEnum novoStatus = mapearStatus(status);
+        LocalDateTime dateApproved = null;
+        if (dateApprovedStr != null) {
+            dateApproved = LocalDateTime.parse(dateApprovedStr, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        }
+
+        pagamento.setStatusPagamentoEnum(novoStatus);
+        if (dateApproved != null) {
+            pagamento.setDataPagamento(dateApproved);
+        }
 
         Pagamento atualizado = pagamentoRepository.save(pagamento);
 
@@ -124,10 +145,10 @@ public class PagamentoService {
             ingressoRepository.save(ingresso);
         }
 
-        if (listaQrCodes.size() > 0) {
+        if (!listaQrCodes.isEmpty()) {
             try {
                 byte[] pdfData = geradorPdfService.gerarPdfComQrCodes(new ArrayList<>(ingressos), listaQrCodes);
-                
+
                 String emailDestino = pagamento.getIngressos().iterator().next().getUsuario().getEmail();
                 String assunto = "Ingressos Ativados - Catedral São Pedro de Alcântara";
                 emailService.enviarEmailComPdf(emailDestino, assunto, pdfData);
@@ -138,5 +159,54 @@ public class PagamentoService {
 
         return Optional.of(PagamentoDTO.toDto(atualizado));
     }
+
+    private StatusPagamentoEnum mapearStatus(String status) {
+        return switch (status.toLowerCase()) {
+            case "approved", "pago" -> StatusPagamentoEnum.PAGO;
+            case "pending", "pendente" -> StatusPagamentoEnum.PENDENTE;
+            case "cancelled", "cancelado" -> StatusPagamentoEnum.CANCELADO;
+            default -> StatusPagamentoEnum.PENDENTE;
+        };
+    }
+    
+    public void processarPagamentoPorId(String paymentId) {
+        try {
+            HttpClient httpClient = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.mercadopago.com/v1/payments/" + paymentId))
+                .header("Authorization", "Bearer " + mercadoPagoToken)
+                .GET()
+                .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode json = mapper.readTree(response.body());
+
+                String status = json.get("status").asText();
+                String dateApproved = json.has("date_approved") && !json.get("date_approved").isNull()
+                    ? json.get("date_approved").asText()
+                    : null;
+
+                JsonNode metadata = json.get("metadata");
+                Long idPagamento = metadata != null && metadata.has("id_pagamento")
+                	    ? metadata.get("id_pagamento").asLong()
+                	    : null;
+
+                if (idPagamento != null) {
+                    atualizarStatus(idPagamento, status, dateApproved);
+                } else {
+                    throw new RuntimeException("idPagamento não encontrado no metadata do pagamento " + paymentId);
+                }
+            } else {
+                throw new RuntimeException("Erro ao consultar pagamento no Mercado Pago: " + response.body());
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Logue isso com SLF4J se preferir
+            throw new RuntimeException("Erro ao processar webhook de pagamento: " + e.getMessage(), e);
+        }
+    }
+
     
 }

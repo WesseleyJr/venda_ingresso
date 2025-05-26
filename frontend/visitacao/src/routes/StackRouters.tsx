@@ -8,6 +8,9 @@ import { EsqueceuSenha } from "../pages/EsqueceuSenha";
 import { Home } from "../pages/Home";
 import { Agenda } from "../pages/Agenda";
 import { CadastroIngresso } from "../pages/CadastroIngresso";
+import { UserCpf } from "../pages/UserCpf";
+import { Pagamento } from "../pages/Pagamento";
+import { LeituraQrcode } from "../pages/LeituraQrcode";
 
 const Stack = createNativeStackNavigator();
 
@@ -46,6 +49,9 @@ export const StackRouters = () => {
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Agenda" component={Agenda} />
       <Stack.Screen name="Cadastro/ingresso" component={CadastroIngresso} />
+      <Stack.Screen name="Cadastro/user/cpf" component={UserCpf} />
+      <Stack.Screen name="Pagamento" component={Pagamento} />
+      <Stack.Screen name="Guia/Leitura" component={LeituraQrcode} />
     </Stack.Navigator>
   );
 };

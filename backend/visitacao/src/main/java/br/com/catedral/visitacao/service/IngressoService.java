@@ -4,8 +4,10 @@ import br.com.catedral.visitacao.constants.StatusIngressoEnum;
 import br.com.catedral.visitacao.constants.StatusPagamentoEnum;
 import br.com.catedral.visitacao.dto.IngressoDTO;
 import br.com.catedral.visitacao.dto.IngressoInserirDTO;
+import br.com.catedral.visitacao.dto.IngressoPagamentoPixDTO;
 import br.com.catedral.visitacao.dto.PagamentoDTO;
 import br.com.catedral.visitacao.dto.PagamentoInserirDTO;
+import br.com.catedral.visitacao.dto.PixPaymentRequestDTO;
 import br.com.catedral.visitacao.model.Agenda;
 import br.com.catedral.visitacao.model.Ingresso;
 import br.com.catedral.visitacao.model.Pagamento;
@@ -16,13 +18,17 @@ import br.com.catedral.visitacao.repository.PagamentoRepository;
 import br.com.catedral.visitacao.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import reactor.core.publisher.Mono;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +45,9 @@ public class IngressoService {
     
     @Autowired
     private PagamentoService pagamentoService;
+
+    @Autowired
+    private PixPaymentService pixPaymentService;
     
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -56,47 +65,49 @@ public class IngressoService {
         return IngressoDTO.toDto(ingresso);
     }
 
-    @Transactional
-    public List<IngressoDTO> inserirLista(List<IngressoInserirDTO> dtos) {
-        List<IngressoDTO> ingressosCriados = new ArrayList<>();
-        
-        double valor = 0;
-        
-        for (IngressoInserirDTO dto : dtos) {
-        	Long idAgenda = dto.idAgenda();
-        	Optional<Agenda> agendaOPT = agendaRepository.findById(idAgenda);
-        	
-        	valor += agendaOPT.get().getPreco();
-        	
+    public Mono<IngressoPagamentoPixDTO> inserirLista(List<IngressoInserirDTO> dtos) {
+        if (dtos.isEmpty()) {
+            return Mono.error(new IllegalArgumentException("Lista de ingressos vazia"));
         }
-        
+
+        Long idAgenda = dtos.get(0).idAgenda();
+        Long idUsuario = dtos.get(0).idUsuario();
+
+        Agenda agenda = agendaRepository.findById(idAgenda)
+                .orElseThrow(() -> new EntityNotFoundException("Agenda não encontrada"));
+
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+
+        double valor = agenda.getPreco() * dtos.size();
+
         PagamentoInserirDTO pagamentoInserirDTO = new PagamentoInserirDTO(StatusPagamentoEnum.PENDENTE, valor, "PIX", null);
-        
         PagamentoDTO pagamentoDTO = pagamentoService.inserir(pagamentoInserirDTO);
-        
-        
+        Pagamento pagamento = PagamentoDTO.toEntity(pagamentoDTO);
 
-        for (IngressoInserirDTO dto : dtos) {
-        	
-        	dto = new IngressoInserirDTO(StatusIngressoEnum.PENDENTE, dto.idAgenda(), pagamentoDTO.id(), dto.nomeCompleto(), dto.celular(), dto.dataNascimento(), dto.nomeResponsavel(), dto.idUsuario());
-        	
-            Agenda agenda = agendaRepository.findById(dto.idAgenda())
-                    .orElseThrow(() -> new EntityNotFoundException("Agenda não encontrada"));
 
-            Pagamento pagamento = pagamentoRepository.findById(dto.idPagamento())
-                    .orElseThrow(() -> new EntityNotFoundException("Pagamento não encontrado"));
+        PixPaymentRequestDTO pixPaymentRequestDTO = new PixPaymentRequestDTO();
+        pixPaymentRequestDTO.setQuantity(dtos.size());
+        pixPaymentRequestDTO.setTitle("Visitação da torre - Catedral São Pedro de Alcântara");
+        pixPaymentRequestDTO.setUnitPrice(valor);
 
-            Usuario usuario = usuarioRepository.findById(dto.idUsuario())
-                    .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        return pixPaymentService.createPixPayment(pixPaymentRequestDTO, usuario.getEmail(), usuario.getCpf(), pagamentoDTO.id())
+                .map(pixResponse -> {
+                    List<IngressoDTO> ingressosCriados = new ArrayList<>();
 
-            Ingresso ingresso = dto.toEntity(agenda, pagamento, usuario);
+                    for (IngressoInserirDTO dto : dtos) {
 
-            ingressoRepository.save(ingresso);
-            ingressosCriados.add(IngressoDTO.toDto(ingresso));
-        }
+                        Ingresso ingresso = dto.toEntity(agenda, pagamento, usuario);
 
-        return ingressosCriados;
+                        ingressoRepository.save(ingresso);
+                        ingressosCriados.add(IngressoDTO.toDto(ingresso));
+                    }
+
+                    return new IngressoPagamentoPixDTO(ingressosCriados, pixResponse);
+                });
     }
+
+
 
     @Transactional
     public IngressoDTO atualizar(Long id, IngressoInserirDTO dto) {

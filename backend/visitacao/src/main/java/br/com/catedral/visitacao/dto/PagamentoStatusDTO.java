@@ -1,14 +1,23 @@
 package br.com.catedral.visitacao.dto;
 
-import br.com.catedral.visitacao.constants.StatusPagamentoEnum;
-import br.com.catedral.visitacao.model.Pagamento;
-import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
-public record PagamentoStatusDTO(
-    @NotNull(message = "Status do pagamento não pode ser nulo")
-    StatusPagamentoEnum statusPagamentoEnum
-) {
-    public static PagamentoStatusDTO toDto(Pagamento pagamento) {
-        return new PagamentoStatusDTO(pagamento.getStatusPagamentoEnum());
+import br.com.catedral.visitacao.constants.StatusPagamentoEnum;
+
+public class PagamentoStatusDTO {
+    private StatusPagamentoEnum statusPagamentoEnum;
+    private LocalDateTime dataAprovacao;
+
+    public PagamentoStatusDTO(StatusPagamentoEnum statusPagamentoEnum, LocalDateTime dataAprovacao) {
+        this.statusPagamentoEnum = statusPagamentoEnum;
+        this.dataAprovacao = dataAprovacao;
+    }
+
+    public StatusPagamentoEnum getStatusPagamentoEnum() {
+        return statusPagamentoEnum;
+    }
+
+    public LocalDateTime getDataAprovacao() {
+        return dataAprovacao;
     }
 }

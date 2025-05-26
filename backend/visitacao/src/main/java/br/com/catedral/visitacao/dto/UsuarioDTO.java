@@ -14,18 +14,21 @@ public class UsuarioDTO {
 	private String nome;
 	private String email;
 	private Set<Perfil> perfis;
+	private String cpf;
 
-	public UsuarioDTO(Long id, String nome, String email) {
+	public UsuarioDTO(Long id, String nome, String email, String cpf) {
 		super();
 		this.id = id;
 		this.nome = nome;
 		this.email = email;
+		this.cpf = cpf;
 	}
 
 	public UsuarioDTO(Usuario usuario) {
 		this.id = usuario.getId();
 		this.nome = usuario.getNome();
 		this.email = usuario.getEmail();
+		this.cpf = usuario.getCpf();
 		this.perfis = new HashSet<>();
 		for (UsuarioPerfil usuarioPerfil : usuario.getUsuarioPerfis()) {
 			this.perfis.add(usuarioPerfil.getId().getPerfil());
@@ -67,6 +70,14 @@ public class UsuarioDTO {
 
 	public void setPerfis(Set<Perfil> perfis) {
 		this.perfis = perfis;
+	}
+
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
 	}
 	
 	

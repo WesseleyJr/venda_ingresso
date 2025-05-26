@@ -44,6 +44,7 @@ public class SecurityConfig {
 	        authorize
 	            .requestMatchers(HttpMethod.GET, "/usuario/**").permitAll()
 	            .requestMatchers(HttpMethod.POST, "/usuario").permitAll()
+	            .requestMatchers(HttpMethod.PUT, "/usuario/**").permitAll()
 	            .requestMatchers(HttpMethod.GET, "/agenda/**").permitAll()
 	            .requestMatchers(HttpMethod.POST, "/agenda").permitAll()
 	            .requestMatchers(HttpMethod.PUT, "/agenda/**").permitAll()
@@ -70,6 +71,8 @@ public class SecurityConfig {
 	            .requestMatchers(HttpMethod.PUT, "/qrcode/**").permitAll()
 	            .requestMatchers(HttpMethod.DELETE, "/qrcode/**").permitAll()
 	            .requestMatchers(HttpMethod.POST, "/senha/**").permitAll()
+	            .requestMatchers(HttpMethod.POST, "/api/pix/**").permitAll()
+	            .requestMatchers(HttpMethod.POST, "/webhook/pix/**").permitAll()
 	            .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 	 
 	            .anyRequest().authenticated()

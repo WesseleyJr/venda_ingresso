@@ -23,16 +23,20 @@ import { useCompraContext } from "../../hooks/compraContext";
 import { useNavigation } from "@react-navigation/native";
 
 export const Agenda = () => {
+  const navigation = useNavigation();
   const { apiUrl } = useApiUrl();
-  const {setQntIngresso, setAgendaId} = useCompraContext();
+  const { setQntIngresso, setAgendaId, setValorTotal } = useCompraContext();
+
   const [mesSelect, setMesSelect] = useState<number>(0);
   const [diaSelect, setDiaSelect] = useState<number>(0);
-  const [horaSelect, setHoraSelect] = useState<string>('');
+  const [horaSelect, setHoraSelect] = useState<string>("");
   const [diasList, setDiasList] = useState<number[]>([]);
   const [horasList, setHorasList] = useState<string[]>([]);
   const [vagas, setVagas] = useState<number>(0);
   const [datasDisponiveis, setDatasDisponiveis] = useState<AgendaDTO[]>([]);
-  const navigation = useNavigation()
+  const [valor, setValor] = useState<number>(0);
+  const [qntIngressoSelecionado, setQntIngressoSelecionado] =
+    useState<number>(0);
 
   const handleMesSelect = async (month: string) => {
     const monthNumber = Number(month);
@@ -135,7 +139,7 @@ export const Agenda = () => {
       const horaCompleta = `${horaData}:${minutoData}`;
 
       const horaFormatada = hora.padStart(5, "0");
-      setHoraSelect(hora)
+      setHoraSelect(hora);
       return (
         diaData === diaSelect &&
         mesData === mesSelect &&
@@ -151,7 +155,8 @@ export const Agenda = () => {
   };
 
   const handleVagas = (dataFiltrada: AgendaDTO) => {
-    setAgendaId(dataFiltrada.id)
+    setAgendaId(dataFiltrada.id);
+    setValor(dataFiltrada.preco)
     const qntIngressosVendidos = dataFiltrada.ingressos.length;
     const qntIngressosDisponiveis =
       dataFiltrada.capacidade - qntIngressosVendidos;
@@ -160,7 +165,7 @@ export const Agenda = () => {
 
   return (
     <>
-      <HeaderReturn handleFunction={()=>navigation.navigate('Home')}/>
+      <HeaderReturn handleFunction={() => navigation.navigate("Home")} />
       <View style={styles.container}>
         <Text style={styles.h1}>Escolha data e horário da visitação</Text>
         <View style={styles.selectArea}>
@@ -176,10 +181,23 @@ export const Agenda = () => {
                   />
                   {horaSelect && (
                     <>
-                    <SelectQntIngresso qntIngresso={vagas} handleFunction={(item)=>setQntIngresso(item)}/>
+                      <SelectQntIngresso
+                        qntIngresso={vagas}
+                        handleFunction={(item) => {
+                          setQntIngressoSelecionado(item)
+                          setQntIngresso(item);
+                        }}
+                      />
+                      <Text style={styles.label}>
+                        Valor unitário do ingresso: {valor}
+                      </Text>
+                      <Text style={styles.label}>
+                        Total: {valor * qntIngressoSelecionado}
+                      </Text>
                       <ButtonType
                         handleFunction={() => {
-                          navigation.navigate('Cadastro/ingresso')
+                          setValorTotal(valor * qntIngressoSelecionado)
+                          navigation.navigate("Cadastro/ingresso");
                         }}
                         title={"Continuar"}
                         propsBackgroundColor="#661111"

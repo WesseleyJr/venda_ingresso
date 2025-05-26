@@ -8,11 +8,9 @@ export const postIngresso = async (data: FormDataIngresso[], url: string ) => {
 
   try {
     const response = await axios.post(`${url}/ingresso`, data, {headers:{Authorization: token}});
-    console.log(response.data);
     
     return response;
   } catch (error) {
-    console.log(error);
     
     if (axios.isAxiosError(error)) {
       throw error.response?.data || error;

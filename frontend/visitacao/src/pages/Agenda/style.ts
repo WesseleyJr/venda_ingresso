@@ -35,7 +35,11 @@ export const styles = StyleSheet.create({
       borderRadius: 10,
       fontSize: 14,
       paddingLeft: 8
-    }
-    
+    },
+    label: {
+    color: '#fff',
+    fontSize: 15,
+    marginLeft: 5
+  },
 
 })

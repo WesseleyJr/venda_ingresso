@@ -11,4 +11,6 @@ import br.com.catedral.visitacao.model.Usuario;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	Usuario findByEmail(String email);
 	
+	Usuario findByCpf(String email);
+	
 }

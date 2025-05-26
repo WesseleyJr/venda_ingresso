@@ -91,3 +91,7 @@ export type FormDataIngresso = {
   idPagamento: number
 }
 
+export type PutCPFData = {
+  cpf: string
+}
+

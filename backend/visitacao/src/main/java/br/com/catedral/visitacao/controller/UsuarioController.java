@@ -9,11 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import br.com.catedral.visitacao.dto.UsuarioCpfDTO;
 import br.com.catedral.visitacao.dto.UsuarioDTO;
 import br.com.catedral.visitacao.dto.UsuarioInserirDTO;
 import br.com.catedral.visitacao.model.Usuario;
@@ -54,6 +56,12 @@ public class UsuarioController {
 				.buildAndExpand(usuarioDTO.getId())
 				.toUri();
 		return ResponseEntity.created(uri).body(usuarioDTO);
+	}
+	
+	@PutMapping("/cpf/{id}")
+	public ResponseEntity<UsuarioDTO> inserirCPF(@PathVariable Long id, @RequestBody UsuarioCpfDTO usuarioCpfDTO){
+		UsuarioDTO usuarioDTO = usuarioService.inserirCpf(usuarioCpfDTO, id);
+		return ResponseEntity.ok(usuarioDTO);
 	}
 	
 }

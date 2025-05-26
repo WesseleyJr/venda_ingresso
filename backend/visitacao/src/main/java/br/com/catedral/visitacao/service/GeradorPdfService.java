@@ -50,7 +50,6 @@ public class GeradorPdfService {
                     document.add(new Paragraph("Nome Responsável: " + ingressoDoBanco.getNomeResponsavel()));
                     document.add(new Paragraph("Data: " + ingressoDoBanco.getAgenda().getDataHora().toLocalDate()));
                     document.add(new Paragraph("Hora: " + ingressoDoBanco.getAgenda().getDataHora().toLocalTime()));
-                    document.add(new Paragraph("ID Ingresso: " + ingressoDoBanco.getId()));
 
                     byte[] qrCodeData = qrCode.dados();
                     Image qrImage = new Image(ImageDataFactory.create(qrCodeData));

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Platform, Text, TouchableOpacity } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { styles } from './style';
-import { FontAwesome5 } from '@expo/vector-icons';  // Substituindo o Icon do react-native-elements
+import { FontAwesome5 } from '@expo/vector-icons';
 
 interface DataNascimentoProps {
   onDateSelected: (date: Date) => void;
@@ -27,9 +27,19 @@ const DataNascimento: React.FC<DataNascimentoProps> = ({ onDateSelected }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.selectedDate}>Data de nascimento:</Text>
+
       <TouchableOpacity style={styles.button} onPress={showDatePicker}>
-        <Text style={styles.buttonText}>{date.toLocaleDateString('pt-BR')}</Text>
-        <FontAwesome5 name="calendar" size={24} color="black" /> {/* Substituindo o Icon por FontAwesome5 */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width:'100%'}}>
+          <Text style={styles.buttonText}>
+            {date.toLocaleDateString('pt-BR')}
+          </Text>
+          <FontAwesome5
+            name="calendar"
+            size={24}
+            color="black"
+            style={{ marginLeft: 8 }}
+          />
+        </View>
       </TouchableOpacity>
 
       {showPicker && (

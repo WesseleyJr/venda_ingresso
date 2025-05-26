@@ -35,4 +35,14 @@ public record PagamentoDTO(
             pagamento.getDataPagamento()
         );
     }
+    
+    public static Pagamento toEntity(PagamentoDTO dto) {
+        Pagamento pagamento = new Pagamento();
+        pagamento.setId(dto.id());
+        pagamento.setStatusPagamentoEnum(dto.statusPagamentoEnum());
+        pagamento.setValor(dto.valor());
+        pagamento.setMetodoPagamento(dto.metodoPagamento());
+        pagamento.setDataPagamento(dto.dataPagamento());
+        return pagamento;
+    }
 }
