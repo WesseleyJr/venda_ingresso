@@ -92,7 +92,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           navigation.navigate('Home');
         }else if(decoded.role.includes('ROLE_GUIA')){
           navigation.navigate('Guia/Leitura');
-
+        }else if(decoded.role.includes('ROLE_GERENCIA')){
+          navigation.navigate('Home/gerencia');
         }
         
       }

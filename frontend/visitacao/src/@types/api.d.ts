@@ -91,7 +91,10 @@ export type FormDataIngresso = {
   idPagamento: number
 }
 
-export type PutCPFData = {
-  cpf: string
+export type FormDataAgenda = {
+  dataHora: string
+  preco: number
+  capacidade: number
+  idGuia: number
 }
 
