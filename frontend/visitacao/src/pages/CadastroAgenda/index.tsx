@@ -11,12 +11,14 @@ import {
 } from "react-native";
 import { styles } from "./style";
 import { Text } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 import { useApiUrl } from "../../hooks/ApiUrlContext";
 import { postAgenda } from "../../service/agendaService";
+import { getListaGuia } from "../../service/guiaService";
+import { FormDataGuia, FormDataGuiaGet } from "../../@types/api";
+import { Picker } from "@react-native-picker/picker";
 
-// Função para aplicar máscara de data: AAAA-MM-DD
 const formatDate = (value: string) => {
   const digits = value.replace(/\D/g, "").slice(0, 8);
   if (digits.length <= 4) return digits;
@@ -24,7 +26,6 @@ const formatDate = (value: string) => {
   return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6)}`;
 };
 
-// Função para aplicar máscara de hora: HH:MM
 const formatTime = (value: string) => {
   const digits = value.replace(/\D/g, "").slice(0, 4);
   if (digits.length <= 2) return digits;
@@ -35,10 +36,28 @@ export const CadastroAgenda = () => {
   const navigation = useNavigation();
   const { apiUrl } = useApiUrl();
 
-  const [data, setData] = useState("");
-  const [hora, setHora] = useState("");
-  const [capacidade, setCapacidade] = useState("");
-  const [preco, setPreco] = useState("");
+  const [data, setData] = useState<string>("");
+  const [hora, setHora] = useState<string>("");
+  const [capacidade, setCapacidade] = useState<string>("");
+  const [preco, setPreco] = useState<string>("");
+  const [idGuia, setIdGuia] = useState<number>(0);
+  const [guias, setGuias] = useState<FormDataGuiaGet[]>([]);
+
+  useEffect(() => {
+    const handleListarGuias = async () => {
+      try {
+        const response = await getListaGuia(apiUrl);
+        setGuias(response);
+      } catch (error) {
+        Toast.show({
+          type: "error",
+          text1: "Erro ao buscar guias",
+        });
+      }
+    };
+
+    handleListarGuias();
+  }, []);
 
   const handleSubmit = async () => {
     if (!data || !hora || !capacidade || !preco) {
@@ -55,7 +74,7 @@ export const CadastroAgenda = () => {
       dataHora,
       preco: parseFloat(preco.replace(",", ".")),
       capacidade: parseInt(capacidade),
-      idGuia: 1,
+      idGuia: idGuia,
     };
 
     try {
@@ -76,7 +95,7 @@ export const CadastroAgenda = () => {
   return (
     <>
       <HeaderReturn
-        handleFunction={() => navigation.navigate("Cadastro/ingresso")}
+        handleFunction={() => navigation.navigate("Home/gerencia")}
       />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView
@@ -139,6 +158,25 @@ export const CadastroAgenda = () => {
                     value={preco}
                     onChangeText={setPreco}
                   />
+                </View>
+
+                <View style={styles.inputContent}>
+                  <Text style={styles.label}>Selecione um guia:</Text>
+                  <View style={[styles.input, { padding: 0 }]}>
+                    <Picker
+                      selectedValue={idGuia}
+                      onValueChange={(itemValue) => setIdGuia(itemValue)}
+                    >
+                      <Picker.Item label="Selecione um guia" value={0} />
+                      {guias.map((guia) => (
+                        <Picker.Item
+                          key={guia.id}
+                          label={guia.nomeCompleto}
+                          value={guia.id}
+                        />
+                      ))}
+                    </Picker>
+                  </View>
                 </View>
 
                 <TouchableOpacity style={styles.button} onPress={handleSubmit}>

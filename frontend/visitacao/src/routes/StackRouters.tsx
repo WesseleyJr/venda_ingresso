@@ -14,36 +14,52 @@ import { LeituraQrcode } from "../pages/LeituraQrcode";
 import { CadastroAgenda } from "../pages/CadastroAgenda";
 import { HomeGerencia } from "../pages/HomeGerencia";
 import { VisualizarAgendas } from "../pages/VisualizarAgendas";
+import { ValidarIngresso } from "../pages/ValidarIngresso";
+import { CadastroGuia } from "../pages/CadastroGuia";
 
 const Stack = createNativeStackNavigator();
 
 export const StackRouters = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [initialRoute, setInitialRoute] = useState<string>("Login");
 
   useEffect(() => {
-    const checkToken = async () => {
+    const checkAuthAndRole = async () => {
       const token = await AsyncStorage.getItem("@token");
+      const role = await AsyncStorage.getItem("@role");
 
-      if (token) {
-        setIsAuthenticated(true);
+      if (token && role) {
+        switch (role) {
+          case "ROLE_USER":
+            setInitialRoute("Home");
+            break;
+          case "ROLE_GERENCIA":
+            setInitialRoute("Home/gerencia");
+            break;
+          case "ROLE_GUIA":
+            setInitialRoute("Guia/Leitura");
+            break;
+          default:
+            setInitialRoute("Login");
+            break;
+        }
       } else {
-        setIsAuthenticated(false);
+        setInitialRoute("Login");
       }
 
       setIsLoading(false);
     };
 
-    checkToken();
+    checkAuthAndRole();
   }, []);
 
   if (isLoading) {
-    return null;
+    return null; // Ou um splash/loading
   }
 
   return (
     <Stack.Navigator
-      initialRouteName={isAuthenticated ? "Home" : "Login"}
+      initialRouteName={initialRoute}
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen name="Login" component={Login} />
@@ -57,6 +73,9 @@ export const StackRouters = () => {
       <Stack.Screen name="Cadastro/agenda" component={CadastroAgenda} />
       <Stack.Screen name="Home/gerencia" component={HomeGerencia} />
       <Stack.Screen name="Visualizar/agendas" component={VisualizarAgendas} />
+      <Stack.Screen name="Guia/Leitura" component={LeituraQrcode} />
+      <Stack.Screen name="Guia/validar" component={ValidarIngresso} />
+      <Stack.Screen name="Cadastro/guia" component={CadastroGuia} />
     </Stack.Navigator>
   );
 };

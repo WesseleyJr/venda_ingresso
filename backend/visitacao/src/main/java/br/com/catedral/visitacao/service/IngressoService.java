@@ -1,7 +1,7 @@
 package br.com.catedral.visitacao.service;
 
-import br.com.catedral.visitacao.constants.StatusIngressoEnum;
 import br.com.catedral.visitacao.constants.StatusPagamentoEnum;
+import br.com.catedral.visitacao.dto.AtualizarStatusIngressoDTO;
 import br.com.catedral.visitacao.dto.IngressoDTO;
 import br.com.catedral.visitacao.dto.IngressoInserirDTO;
 import br.com.catedral.visitacao.dto.IngressoPagamentoPixDTO;
@@ -25,10 +25,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -133,5 +129,14 @@ public class IngressoService {
             throw new EntityNotFoundException("Ingresso não encontrado");
         }
         ingressoRepository.deleteById(id);
+    }
+    
+
+    public void atualizarStatus(Long id, AtualizarStatusIngressoDTO dto) {
+        Ingresso ingresso = ingressoRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Ingresso não encontrado com ID: " + id));
+
+        ingresso.setStatusIngressoEnum(dto.getStatus());
+        ingressoRepository.save(ingresso);
     }
 }

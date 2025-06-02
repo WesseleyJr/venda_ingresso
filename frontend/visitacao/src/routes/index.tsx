@@ -6,6 +6,7 @@ import { StackRouters } from "./StackRouters";
 import { AuthProvider } from "../hooks/useAuth";
 import { ApiUrlProvider } from "../hooks/ApiUrlContext";
 import { CompraContextProvider } from "../hooks/compraContext";
+import { IngressoProvider } from "../hooks/IngressoContext";
 
 export const Routers = () => {
   return (
@@ -13,7 +14,9 @@ export const Routers = () => {
       <ApiUrlProvider>
         <AuthProvider>
           <CompraContextProvider>
-            <StackRouters />
+            <IngressoProvider>
+              <StackRouters />
+            </IngressoProvider>
           </CompraContextProvider>
         </AuthProvider>
       </ApiUrlProvider>

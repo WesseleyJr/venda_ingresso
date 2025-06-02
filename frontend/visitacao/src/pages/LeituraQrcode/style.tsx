@@ -50,4 +50,33 @@ export const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
   },
+  // Adicione no seu arquivo styles.ts
+
+cameraWrapper: {
+  marginTop: 20,
+  width: '100%',
+  aspectRatio: 1,
+  borderRadius: 12,
+  overflow: 'hidden',
+},
+
+camera: {
+  flex: 1,
+},
+
+qrOverlay: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
+qrBox: {
+  width: 250,
+  height: 250,
+  borderWidth: 2,
+  borderColor: '#fff',
+  borderRadius: 16,
+  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+},
+
 });

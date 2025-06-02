@@ -1,5 +1,6 @@
 package br.com.catedral.visitacao.controller;
 
+import br.com.catedral.visitacao.dto.AtualizarStatusIngressoDTO;
 import br.com.catedral.visitacao.dto.IngressoDTO;
 import br.com.catedral.visitacao.dto.IngressoInserirDTO;
 import br.com.catedral.visitacao.dto.IngressoPagamentoPixDTO;
@@ -10,6 +11,7 @@ import reactor.core.publisher.Mono;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,6 +54,13 @@ public class IngressoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         ingressoService.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
+    
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Void> atualizarStatus(@PathVariable Long id,
+                                                @RequestBody AtualizarStatusIngressoDTO dto) {
+        ingressoService.atualizarStatus(id, dto);
         return ResponseEntity.noContent().build();
     }
 }

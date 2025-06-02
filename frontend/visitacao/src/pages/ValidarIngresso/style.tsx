@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#332222",
     alignItems: "center",
     padding: 1,
-    marginTop: 10,
+    marginTop: 50,
   },
 
   title: {
@@ -18,11 +18,13 @@ export const styles = StyleSheet.create({
   input: {
     backgroundColor: "#fff",
     borderRadius: 10,
-    padding: 10,
     marginBottom: 10,
     width: "100%",
-    height: 50,
+    height: 45,
+    paddingHorizontal: 10,
+    fontSize: 16,
   },
+
   formContainer: {
     padding: 20,
     width: "90%",

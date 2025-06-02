@@ -55,7 +55,7 @@ public class SecurityConfig {
 	            .requestMatchers(HttpMethod.DELETE, "/guia/**").permitAll()
 	            .requestMatchers(HttpMethod.GET, "/ingresso/**").permitAll()
 	            .requestMatchers(HttpMethod.POST, "/ingresso").permitAll()
-	            .requestMatchers(HttpMethod.PUT, "/ingresso").permitAll()
+	            .requestMatchers(HttpMethod.PUT, "/ingresso/**").permitAll()
 	            .requestMatchers(HttpMethod.DELETE, "/ingresso/**").permitAll()
 	            .requestMatchers(HttpMethod.GET, "/cliente/**").permitAll()
 	            .requestMatchers(HttpMethod.POST, "/cliente/**").permitAll()

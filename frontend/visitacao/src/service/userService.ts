@@ -44,3 +44,16 @@ export const buscarUserPorId = async ( url: string, idUser: number) => {
     }
   }
 };
+export const getListaUser = async ( url: string) => {
+
+  try {
+    const response = await axios.get(`${url}/usuario`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error.response?.data || error;
+    } else {
+      throw error;
+    }
+  }
+};

@@ -46,7 +46,7 @@ export const HomeGerencia = () => {
                 <TouchableOpacity style={styles.buttonType} onPress={()=>navigation.navigate('Cadastro/agenda')}>
                   <Text style={styles.buttonTextType}>Cadastrar agenda</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonType} onPress={()=>navigation.navigate('Cadastro/agenda')}>
+                <TouchableOpacity style={styles.buttonType} onPress={()=>navigation.navigate('Cadastro/guia')}>
                   <Text style={styles.buttonTextType}>Cadastrar guia</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.buttonType} onPress={()=>navigation.navigate('Visualizar/agendas')}>

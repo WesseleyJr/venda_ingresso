@@ -98,3 +98,25 @@ export type FormDataAgenda = {
   idGuia: number
 }
 
+
+export type FormDataGuia = {
+    nomeCompleto: string
+    celular: string
+    cpf: string
+    idUsuario: number
+}
+export type FormDataGuiaGet = {
+    nomeCompleto: string
+    celular: string
+    cpf: string
+    id: number
+}
+export type FormDataUserGet = {
+  nome: string;
+  email: string;
+  id: number;
+  perfis: Perfil[];
+}
+
+
+
